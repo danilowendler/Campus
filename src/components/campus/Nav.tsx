@@ -1,3 +1,5 @@
+"use client";
+
 import { LogoMark } from "./LogoMark";
 import { cn } from "@/lib/utils";
 

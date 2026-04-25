@@ -232,3 +232,42 @@ body { min-height: 100vh; }
     @apply font-sans;
   }
 }
+
+/* ── Landing Page ─────────────────────────────────────────────────────────── */
+.footer-fiap-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color .15s;
+}
+.footer-fiap-link:hover { color: var(--accent); }
+
+/* Bento responsive — How It Works */
+@media (max-width: 860px) {
+  .how-bento {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .how-bento > div {
+    grid-column: span 2 !important;
+    grid-row: auto !important;
+  }
+}
+
+/* Bento responsive — Featured Projects */
+@media (max-width: 860px) {
+  .projects-bento {
+    grid-template-columns: 1fr !important;
+  }
+  .projects-bento > div {
+    grid-column: span 1 !important;
+    grid-row: auto !important;
+    min-height: 260px !important;
+  }
+}
+
+/* Hero responsive */
+@media (max-width: 600px) {
+  .hero-section { padding: 60px 16px 60px !important; }
+  .hero-stats   { gap: 28px !important; margin-top: 48px !important; }
+  .cta-section  { padding: 48px 24px !important; margin: 0 16px 60px !important; }
+}
