@@ -118,7 +118,7 @@ interface BentoCardProps {
   big?: boolean;
 }
 
-function BentoCard({ icon, title, sub, big }: BentoCardProps) {
+function BentoCard({ icon, title, sub, num }: BentoCardProps) {
   return (
     <GlassCard
       style={{
@@ -129,55 +129,7 @@ function BentoCard({ icon, title, sub, big }: BentoCardProps) {
         justifyContent: "space-between",
         overflow: "hidden",
         height: "100%",
-        minHeight: big ? undefined : 220,
-      }}
-    >
-      <div>
-        <div style={iconBox}>{icon}</div>
-        <h3
-          style={{
-            fontSize: 22,
-            fontWeight: 600,
-            letterSpacing: "-.02em",
-            lineHeight: 1.15,
-            marginBottom: 10,
-            color: "var(--text)",
-          }}
-        >
-          {title}
-        </h3>
-        <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.55 }}>{sub}</p>
-      </div>
-      {/* Decoração de fundo */}
-      <span
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          right: -20,
-          bottom: -20,
-          width: 180,
-          height: 180,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(237,21,90,.22), transparent 60%)",
-          filter: "blur(20px)",
-          pointerEvents: "none",
-        }}
-      />
-    </GlassCard>
-  );
-}
-
-function BigBentoCard({ icon, title, sub, num }: BentoCardProps) {
-  return (
-    <GlassCard
-      style={{
-        position: "relative",
-        padding: 28,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        overflow: "hidden",
-        height: "100%",
+        minHeight: 220,
       }}
     >
       <div>
@@ -203,11 +155,11 @@ function BigBentoCard({ icon, title, sub, num }: BentoCardProps) {
           position: "absolute",
           right: -20,
           bottom: -20,
-          width: 220,
-          height: 220,
+          width: 180,
+          height: 180,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(237,21,90,.28), transparent 60%)",
-          filter: "blur(24px)",
+          background: "radial-gradient(circle, rgba(237,21,90,.22), transparent 60%)",
+          filter: "blur(20px)",
           pointerEvents: "none",
         }}
       />
@@ -302,9 +254,9 @@ export function HowItWorksSection() {
           gap: 18,
         }}
       >
-        {/* cf-1: span 3 col, 2 row — card grande com número */}
+        {/* cf-1: span 3 col, 2 row */}
         <div style={{ gridColumn: "span 3", gridRow: "span 2" }}>
-          <BigBentoCard {...CARDS[0]} big />
+          <BentoCard {...CARDS[0]} />
         </div>
         {/* cf-2: span 3, 1 row */}
         <div style={{ gridColumn: "span 3" }}>
