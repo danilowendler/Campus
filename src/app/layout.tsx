@@ -5,6 +5,7 @@ import { MeshBackground } from "@/components/campus/MeshBackground";
 import { GrainOverlay } from "@/components/campus/GrainOverlay";
 import { Nav } from "@/components/campus/Nav";
 import { CampusButton } from "@/components/campus/CampusButton";
+import { ScrollLink } from "@/components/campus/ScrollLink";
 import { cn } from "@/lib/utils";
 
 const instrumentSans = Instrument_Sans({
@@ -50,13 +51,13 @@ export default function RootLayout({
           <Nav
             actions={
               <>
-                <a
-                  href="#como-funciona"
+                <ScrollLink
+                  targetId="como-funciona"
                   className="px-3.5 py-2 text-sm font-medium"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Como funciona
-                </a>
+                </ScrollLink>
                 <a href="/login">
                   <CampusButton variant="primary" size="sm">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
