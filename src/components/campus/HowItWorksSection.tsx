@@ -246,38 +246,17 @@ export function HowItWorksSection() {
         </p>
       </div>
 
-      {/* Bento grid */}
+      {/* Bento grid — 3 colunas × 2 linhas */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(6, 1fr)",
+          gridTemplateColumns: "repeat(3, 1fr)",
           gap: 18,
         }}
       >
-        {/* cf-1: span 3 col, 2 row */}
-        <div style={{ gridColumn: "span 3", gridRow: "span 2" }}>
-          <BentoCard {...CARDS[0]} />
-        </div>
-        {/* cf-2: span 3, 1 row */}
-        <div style={{ gridColumn: "span 3" }}>
-          <BentoCard {...CARDS[1]} />
-        </div>
-        {/* cf-3: span 3, 1 row */}
-        <div style={{ gridColumn: "span 3" }}>
-          <BentoCard {...CARDS[2]} />
-        </div>
-        {/* cf-4: span 2 */}
-        <div style={{ gridColumn: "span 2" }}>
-          <BentoCard {...CARDS[3]} />
-        </div>
-        {/* cf-5: span 4 */}
-        <div style={{ gridColumn: "span 4" }}>
-          <BentoCard {...CARDS[4]} />
-        </div>
-        {/* last: span 6 */}
-        <div style={{ gridColumn: "span 6" }}>
-          <BentoCard {...CARDS[5]} />
-        </div>
+        {CARDS.map((card) => (
+          <BentoCard key={card.num} {...card} />
+        ))}
       </div>
 
     </section>
