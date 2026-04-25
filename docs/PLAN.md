@@ -1,4 +1,5 @@
 # Campus FIAP — Plano de Execução
+# Project at - https://github.com/danilowendler/Campus
 
 > **Estratégia:** interface primeiro, dados reais depois.  
 > Cada milestone entrega algo navegável e testável antes de avançar.  
@@ -38,19 +39,19 @@
 
 ### Entregas
 
-- [ ] `components/campus/LogoMark.tsx` — ícone quadrado com gradiente e glow rosa
-- [ ] `components/campus/Nav.tsx` — barra sticky com glassmorphism (blur 18px), logo, links e slot de ações
-- [ ] `components/campus/Avatar.tsx` — círculo com iniciais e gradiente radial; variantes `sm` / `md` / `lg`
-- [ ] `components/campus/SkillTag.tsx` — pill rosa com borda `rgba(237,21,90,.3)` e variante `violet`
-- [ ] `components/campus/Badge.tsx` — `badge-live` (pulsante verde) e `badge-magenta`
-- [ ] `components/campus/GlassCard.tsx` — wrapper com `backdrop-filter`, borda e shimmer `::before`
-- [ ] `components/campus/TiltCard.tsx` — wrapper `"use client"` com efeito 3D e glow seguindo cursor
-- [ ] `components/campus/Button.tsx` — variantes `primary`, `secondary`, `ghost`, `accent`, `danger`; tamanhos `sm`/`default`/`lg`
-- [ ] `components/campus/SkillInput.tsx` — input multi-tag controlado (`"use client"`)
-- [ ] `components/campus/Tabs.tsx` — tabs com fundo glass e tab ativa com gradiente rosa
-- [ ] `components/campus/TeamSlots.tsx` — visualização `X/Y` com avatares empilhados e vagas com `?`
-- [ ] `components/campus/Toast.tsx` + `ToastProvider` — notificações flutuantes (`"use client"`)
-- [ ] Página `/ui-kit` temporária listando todos os componentes (para revisão visual antes de prosseguir)
+- [x] `components/campus/LogoMark.tsx` — ícone quadrado com gradiente e glow rosa
+- [x] `components/campus/Nav.tsx` — barra sticky com glassmorphism (blur 18px), logo, links e slot de ações
+- [x] `components/campus/Avatar.tsx` — círculo com iniciais e gradiente radial; variantes `sm` / `md` / `lg`
+- [x] `components/campus/SkillTag.tsx` — pill rosa com borda `rgba(237,21,90,.3)` e variante `violet`
+- [x] `components/campus/Badge.tsx` — `badge-live` (pulsante verde) e `badge-magenta`
+- [x] `components/campus/GlassCard.tsx` — wrapper com `backdrop-filter`, borda e shimmer `::before`
+- [x] `components/campus/TiltCard.tsx` — wrapper `"use client"` com efeito 3D e glow seguindo cursor
+- [x] `components/campus/CampusButton.tsx` — variantes `primary`, `secondary`, `ghost`, `accent`, `danger`; tamanhos `sm`/`default`/`lg`
+- [x] `components/campus/SkillInput.tsx` — input multi-tag controlado (`"use client"`)
+- [x] `components/campus/Tabs.tsx` — tabs com fundo glass e tab ativa com gradiente rosa
+- [x] `components/campus/TeamSlots.tsx` — visualização `X/Y` com avatares empilhados e vagas com `?`
+- [x] `components/campus/Toast.tsx` + `ToastProvider` — notificações flutuantes (`"use client"`)
+- [x] Página `/ui-kit` temporária listando todos os componentes (para revisão visual antes de prosseguir)
 
 **Commit final:** `feat: add campus ui-kit components (nav, cards, buttons, tags, tilt, toast)`
 
