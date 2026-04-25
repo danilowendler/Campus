@@ -14,18 +14,18 @@
 
 ### Entregas
 
-- [ ] Inicializar projeto Next.js 14 com App Router e TypeScript strict  
+- [x] Inicializar projeto Next.js 14 com App Router e TypeScript strict  
   ```bash
   npx create-next-app@latest campus-fiap --typescript --tailwind --app --src-dir no --import-alias "@/*"
   ```
-- [ ] Configurar `tailwind.config.ts` com os tokens do design system (cores, raios, fontes)
-- [ ] Adicionar variáveis CSS em `app/globals.css` (`--bg`, `--accent`, `--text-muted` etc.)
-- [ ] Importar fontes `Instrument Sans` e `Instrument Serif` via `next/font/google`
-- [ ] Instalar e inicializar shadcn/ui (`npx shadcn@latest init`)
-- [ ] Criar estrutura de pastas: `components/ui/`, `components/campus/`, `lib/`
-- [ ] Configurar `app/layout.tsx` com fundo `--bg` e a mesh de blobs animados
-- [ ] Adicionar `MeshBackground` e `GrainOverlay` como componentes de layout fixo
-- [ ] Commit de validação: rodar `npm run build` sem erros
+- [x] Configurar `tailwind.config.ts` com os tokens do design system (cores, raios, fontes)
+- [x] Adicionar variáveis CSS em `app/globals.css` (`--bg`, `--accent`, `--text-muted` etc.)
+- [x] Importar fontes `Instrument Sans` e `Instrument Serif` via `next/font/google`
+- [x] Instalar e inicializar shadcn/ui (`npx shadcn@latest init`)
+- [x] Criar estrutura de pastas: `components/ui/`, `components/campus/`, `lib/`
+- [x] Configurar `app/layout.tsx` com fundo `--bg` e a mesh de blobs animados
+- [x] Adicionar `MeshBackground` e `GrainOverlay` como componentes de layout fixo
+- [x] Commit de validação: rodar `npm run build` sem erros
 
 **Commit final:** `feat: scaffold next.js app with design system tokens and mesh background`
 
