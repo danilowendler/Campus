@@ -64,12 +64,12 @@
 
 ### Seções a implementar (em ordem)
 
-- [ ] **Hero** — heading com `clamp()`, palavra em itálico `Instrument Serif` com gradiente, subtítulo, dois CTAs, hero-stats (`+1.200 alunos`, `47 projetos`, `12 empresas`)
-- [ ] **Marquee de skills** — faixa infinita com tags de tecnologias (mask fade nas bordas)
-- [ ] **"Como Funciona"** — bento grid 6 colunas com 6 cards: Encontre, Monte, Construa, Ship, Portfólio, Recompensas; cada card tem ícone, título, subtexto e decoração de fundo
-- [ ] **"Projetos rodando agora"** — bento assimétrico: 1 card grande (`bp-1`) + 2 cards menores (`bp-2`, `bp-3`) com `TiltCard`, badge "Ao vivo", skills e member-stack
-- [ ] **CTA section** — caixa com gradiente de fundo, heading com `<em>`, parágrafo e botão primário
-- [ ] **Footer** — `LogoMark` + texto de copyright + link "FIAP"
+- [x] **Hero** — heading com `clamp()`, palavra em itálico `Instrument Serif` com gradiente, subtítulo, dois CTAs, hero-stats (`+1.200 alunos`, `47 projetos`, `12 empresas`)
+- [x] **Marquee de skills** — faixa infinita com tags de tecnologias (mask fade nas bordas)
+- [x] **"Como Funciona"** — bento grid 3×2 com 6 cards: Encontre, Monte, Construa, Ship, Portfólio, Recompensas; cada card tem número itálico, ícone, título, subtexto e decoração de fundo
+- [x] **"Projetos rodando agora"** — bento assimétrico: 1 card grande (`bp-1`) + 2 cards menores (`bp-2`, `bp-3`) com `TiltCard`, badge "Ao vivo", skills e member-stack
+- [x] **CTA section** — caixa com gradiente de fundo, heading com `<em>`, parágrafo e botão primário
+- [x] **Footer** — `LogoMark` + texto de copyright + link "FIAP"
 
 **Commit final:** `feat: landing page — hero, marquee, bento how-it-works, featured projects, cta`
 
@@ -82,12 +82,12 @@
 
 ### Entregas
 
-- [ ] `app/(auth)/login/page.tsx` — rota pública
-- [ ] `components/campus/AuthScreen.tsx` — card glass centralizado com logo, tabs "Entrar"/"Cadastrar", campos de e-mail e senha, botão primário com loader
-- [ ] Validação client-side: e-mail deve terminar em `@fiap.com.br` (mensagem de erro inline)
-- [ ] Animação `fadeUp` na entrada do card
-- [ ] Redirecionamento simulado para `/projects` após submit (usando `useRouter`)
-- [ ] Middleware `middleware.ts` esqueleto: rota `/projects` e `/profile` protegidas (retorna para `/login` se sem sessão)
+- [x] `app/(auth)/login/page.tsx` — rota pública
+- [x] `components/campus/AuthScreen.tsx` — card glass centralizado com logo, tabs "Entrar"/"Cadastrar", campos de e-mail e senha, botão primário com loader
+- [x] Validação client-side: e-mail deve terminar em `@fiap.com.br` (mensagem de erro inline)
+- [x] Animação `fadeUp` na entrada do card
+- [x] Redirecionamento simulado para `/projects` após submit (usando `useRouter`)
+- [x] Proxy `proxy.ts` esqueleto: rota `/projects` e `/profile` protegidas (retorna para `/login` se sem sessão)
 
 **Commit final:** `feat: auth screen ui with fiap domain validation and route protection skeleton`
 

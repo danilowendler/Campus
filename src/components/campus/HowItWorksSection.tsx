@@ -170,10 +170,12 @@ function BentoCard({ icon, title, sub, num }: BentoCardProps) {
 export function HowItWorksSection() {
   return (
     <section
+      id="como-funciona"
       style={{
         padding: "80px 28px",
         maxWidth: 1240,
         margin: "0 auto",
+        scrollMarginTop: 80,
       }}
     >
       {/* Header */}
