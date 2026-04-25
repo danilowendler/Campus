@@ -82,12 +82,12 @@
 
 ### Entregas
 
-- [ ] `app/(auth)/login/page.tsx` — rota pública
-- [ ] `components/campus/AuthScreen.tsx` — card glass centralizado com logo, tabs "Entrar"/"Cadastrar", campos de e-mail e senha, botão primário com loader
-- [ ] Validação client-side: e-mail deve terminar em `@fiap.com.br` (mensagem de erro inline)
-- [ ] Animação `fadeUp` na entrada do card
-- [ ] Redirecionamento simulado para `/projects` após submit (usando `useRouter`)
-- [ ] Middleware `middleware.ts` esqueleto: rota `/projects` e `/profile` protegidas (retorna para `/login` se sem sessão)
+- [x] `app/(auth)/login/page.tsx` — rota pública
+- [x] `components/campus/AuthScreen.tsx` — card glass centralizado com logo, tabs "Entrar"/"Cadastrar", campos de e-mail e senha, botão primário com loader
+- [x] Validação client-side: e-mail deve terminar em `@fiap.com.br` (mensagem de erro inline)
+- [x] Animação `fadeUp` na entrada do card
+- [x] Redirecionamento simulado para `/projects` após submit (usando `useRouter`)
+- [x] Proxy `proxy.ts` esqueleto: rota `/projects` e `/profile` protegidas (retorna para `/login` se sem sessão)
 
 **Commit final:** `feat: auth screen ui with fiap domain validation and route protection skeleton`
 

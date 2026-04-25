@@ -105,12 +105,14 @@ export function HeroSection() {
         className="fade-up fade-up-3"
         style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}
       >
-        <CampusButton variant="primary" size="lg">
-          Entrar na plataforma
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-          </svg>
-        </CampusButton>
+        <a href="/login">
+          <CampusButton variant="primary" size="lg">
+            Entrar na plataforma
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </CampusButton>
+        </a>
         <CampusButton variant="secondary" size="lg">
           Ver projetos
         </CampusButton>
