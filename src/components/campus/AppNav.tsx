@@ -22,7 +22,7 @@ export function AppNav() {
     <nav
       className="sticky top-0 z-[100] flex items-center justify-between px-7 h-16"
       style={{
-        background: "rgba(9,9,11,0.55)",
+        background: "var(--nav-bg)",
         backdropFilter: "blur(18px) saturate(140%)",
         WebkitBackdropFilter: "blur(18px) saturate(140%)",
         borderBottom: "1px solid var(--border)",
@@ -55,7 +55,7 @@ export function AppNav() {
             style={{ color: "var(--text-muted)" }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = "var(--text)";
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
+              (e.currentTarget as HTMLElement).style.background = "var(--surface)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
@@ -71,21 +71,21 @@ export function AppNav() {
       <div className="flex items-center gap-2">
         {/* Configurações */}
         <a
-          href="/profile"
+          href="/settings"
           className="w-9 h-9 rounded-xl inline-flex items-center justify-center transition-colors no-underline"
           style={{
             color: "var(--text-muted)",
-            background: "rgba(255,255,255,0.04)",
+            background: "var(--surface)",
             border: "1px solid var(--border)",
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLElement).style.color = "var(--text)";
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface-2)";
             (e.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
             (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
           }}
           aria-label="Configurações do perfil"
@@ -105,7 +105,7 @@ export function AppNav() {
             className="w-9 h-9 rounded-xl inline-flex items-center justify-center transition-colors cursor-pointer"
             style={{
               color: "var(--text-muted)",
-              background: "rgba(255,255,255,0.04)",
+              background: "var(--surface)",
               border: "1px solid var(--border)",
             }}
             onMouseEnter={(e) => {
@@ -115,7 +115,7 @@ export function AppNav() {
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+              (e.currentTarget as HTMLElement).style.background = "var(--surface)";
               (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
             }}
             aria-label="Sair"
