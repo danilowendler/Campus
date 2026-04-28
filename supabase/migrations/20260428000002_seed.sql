@@ -2,31 +2,28 @@
 -- Campus FIAP — Seed de desenvolvimento
 -- Execução manual: cole no SQL Editor do Supabase
 -- NÃO rodar em produção
+--
+-- PRÉ-REQUISITO: crie ao menos 1 usuário pelo app ou pelo
+-- Supabase Auth dashboard antes de rodar este seed.
+-- O seed usa o primeiro usuário encontrado em auth.users
+-- como autor dos projetos de exemplo.
 -- ============================================================
 
--- Usuário admin de seed (substitua pelo UUID real do auth.users após criar)
--- Crie o usuário via Supabase Auth dashboard com danilo@fiap.com.br
--- e use o UUID gerado aqui:
 do $$
 declare
-  seed_author_id uuid := '00000000-0000-0000-0000-000000000001'; -- placeholder
+  seed_author_id uuid;
   p1 uuid := gen_random_uuid();
   p2 uuid := gen_random_uuid();
   p3 uuid := gen_random_uuid();
   p4 uuid := gen_random_uuid();
 begin
 
-  -- Garante que o usuário de seed existe em public.users
-  insert into public.users (id, name, email, course, bio, skills)
-  values (
-    seed_author_id,
-    'Campus FIAP',
-    'campus@fiap.com.br',
-    'Tecnologia',
-    'Conta de seed para projetos de demonstração.',
-    array['Next.js','TypeScript','Supabase']
-  )
-  on conflict (id) do nothing;
+  -- Pega o UUID do primeiro usuário autenticado existente
+  select id into seed_author_id from auth.users order by created_at limit 1;
+
+  if seed_author_id is null then
+    raise exception 'Nenhum usuário encontrado em auth.users. Crie um usuário pelo app primeiro.';
+  end if;
 
   -- Projetos de exemplo
   insert into public.projects (id, title, description, scope, reward, company, slots, skills, status, author_id)
@@ -79,5 +76,7 @@ begin
       'active',
       seed_author_id
     );
+
+  raise notice 'Seed concluído. 4 projetos criados com author_id = %', seed_author_id;
 
 end $$;
