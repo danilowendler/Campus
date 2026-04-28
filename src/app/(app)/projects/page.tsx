@@ -156,7 +156,6 @@ function EmptyState({ tab, onCreateClick }: { tab: Tab; onCreateClick: () => voi
       className="flex flex-col items-center justify-center text-center py-24 gap-5"
       style={{ animation: "fadeUp .5s cubic-bezier(.22,1,.36,1) both" }}
     >
-      {/* Rocket icon */}
       <span
         className="w-16 h-16 rounded-2xl inline-flex items-center justify-center"
         style={{
