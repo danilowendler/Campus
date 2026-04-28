@@ -13,6 +13,7 @@ interface FieldError {
   password?: string;
   name?: string;
   form?: string;
+  formSuccess?: string;
 }
 
 export function AuthScreen() {
@@ -74,9 +75,15 @@ export function AuthScreen() {
         setLoading(false);
         return;
       }
+      setSuccess(true);
+      setLoading(false);
+      router.refresh();
+      const next = searchParams.get("next") ?? "/projects";
+      router.push(next);
+      return;
     } else {
       const name = nameRef.current!.value.trim();
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { name } },
@@ -86,14 +93,20 @@ export function AuthScreen() {
         setLoading(false);
         return;
       }
+      // Se confirmação de e-mail está ativa, session será null após signUp
+      if (!data.session) {
+        setLoading(false);
+        setErrors({ formSuccess: "Conta criada! Verifique seu e-mail para confirmar o cadastro e depois entre." });
+        return;
+      }
+      // Confirmação desativada (dev) — sessão já existe, redirecionar
+      setSuccess(true);
+      setLoading(false);
+      router.refresh();
+      const next = searchParams.get("next") ?? "/projects";
+      router.push(next);
+      return;
     }
-
-    setSuccess(true);
-    setLoading(false);
-
-    const next = searchParams.get("next") ?? "/projects";
-    router.push(next);
-    router.refresh();
   }
 
   function switchTab(next: AuthTab) {
@@ -258,6 +271,22 @@ export function AuthScreen() {
               }}
             >
               {errors.form}
+            </p>
+          )}
+
+          {errors.formSuccess && (
+            <p
+              role="status"
+              style={{
+                fontSize: "13px",
+                color: "#4ade80",
+                background: "rgba(74,222,128,.08)",
+                border: "1px solid rgba(74,222,128,.25)",
+                borderRadius: "var(--radius)",
+                padding: "10px 12px",
+              }}
+            >
+              {errors.formSuccess}
             </p>
           )}
 
