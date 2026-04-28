@@ -6,7 +6,7 @@ interface GlassCardProps {
   style?: React.CSSProperties;
   /** Desativa o shimmer ::before emulado */
   noShimmer?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export function GlassCard({ children, className, style, noShimmer = false, onClick }: GlassCardProps) {
