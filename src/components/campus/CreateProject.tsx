@@ -148,11 +148,21 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg inline-flex items-center justify-center"
+              className="w-8 h-8 rounded-lg inline-flex items-center justify-center transition-colors duration-150"
               style={{
                 color: "var(--text-muted)",
                 background: "rgba(255,255,255,.05)",
                 border: "1px solid var(--border)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.color = "var(--text)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,.1)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,.05)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
               }}
               aria-label="Fechar"
             >

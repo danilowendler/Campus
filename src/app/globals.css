@@ -19,7 +19,9 @@
   --accent-2:       #FF2E63;
   --accent-3:       #B00E44;
   --accent-soft:    rgba(237,21,90,.14);
+  --accent-light:   rgba(237,21,90,.08);
   --green:          #4ade80;
+  --nav-bg:         rgba(9,9,11,0.55);
   --radius:         12px;
   --radius-lg:      20px;
   --radius-xl:      28px;
@@ -129,6 +131,8 @@ html.campus-light {
   --text-faint:     #a1a1aa;
   --shadow:         0 1px 3px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.07);
   --shadow-hover:   0 2px 8px rgba(0,0,0,.18), 0 8px 24px rgba(237,21,90,.06);
+  --nav-bg:         rgba(242,242,245,0.82);
+  --accent-light:   rgba(237,21,90,.06);
 }
 
 html.campus-light body {
@@ -148,7 +152,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body { min-height: 100vh; }
+body { min-height: 100vh; overflow-x: hidden; }
 
 /* ── Animations ───────────────────────────────────────────────────────────── */
 @keyframes fadeUp {
@@ -268,21 +272,33 @@ body { min-height: 100vh; }
   .how-bento {
     grid-template-columns: 1fr 1fr !important;
   }
-  .how-bento > div {
-    grid-column: span 2 !important;
+  .how-bento > * {
+    grid-column: span 1 !important;
     grid-row: auto !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .how-bento {
+    grid-template-columns: 1fr !important;
   }
 }
 
 /* Bento responsive — Featured Projects */
 @media (max-width: 860px) {
   .projects-bento {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr 1fr !important;
   }
-  .projects-bento > div {
+  .projects-bento > * {
     grid-column: span 1 !important;
     grid-row: auto !important;
     min-height: 260px !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .projects-bento {
+    grid-template-columns: 1fr !important;
   }
 }
 

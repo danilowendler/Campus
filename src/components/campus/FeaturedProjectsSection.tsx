@@ -137,6 +137,7 @@ export function FeaturedProjectsSection() {
 
       {/* Bento assimétrico */}
       <div
+        className="projects-bento"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(6, 1fr)",

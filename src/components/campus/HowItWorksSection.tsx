@@ -250,6 +250,7 @@ export function HowItWorksSection() {
 
       {/* Bento grid — 3 colunas × 2 linhas */}
       <div
+        className="how-bento"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",

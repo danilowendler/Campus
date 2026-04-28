@@ -21,7 +21,7 @@ export function AppNav() {
 
   return (
     <nav
-      className="sticky top-0 z-[100] flex items-center justify-between px-7 h-16"
+      className="sticky top-0 z-[100] flex items-center justify-between px-4 sm:px-7 h-16"
       style={{
         background: "var(--nav-bg)",
         backdropFilter: "blur(18px) saturate(140%)",

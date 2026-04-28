@@ -114,6 +114,16 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
                   background: "rgba(255,255,255,.05)",
                   border: "1px solid var(--border)",
                 }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "var(--text)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,.1)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,.05)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                }}
                 aria-label="Fechar"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
