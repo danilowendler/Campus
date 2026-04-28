@@ -1,9 +1,11 @@
 "use client";
 
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LogoMark } from "./LogoMark";
 import { Avatar } from "./Avatar";
 import { useProfile } from "@/lib/profile-context";
+import { signOut } from "@/lib/actions/profile";
 
 const NAV_LINKS = [
   { label: "Projetos", href: "/projects" },
@@ -13,10 +15,14 @@ const NAV_LINKS = [
 export function AppNav() {
   const router = useRouter();
   const { profile } = useProfile();
+  const [isPending, startTransition] = useTransition();
 
   function handleSignOut() {
-    document.cookie = "campus_session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-    router.push("/login");
+    startTransition(async () => {
+      await signOut();
+      router.push("/login");
+      router.refresh();
+    });
   }
 
   return (

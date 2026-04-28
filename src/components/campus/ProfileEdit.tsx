@@ -63,11 +63,13 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
   async function handleSave() {
     if (!name.trim()) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 650));
-    updateProfile({ name: name.trim(), course, bio: bio.trim(), skills });
-    setSaving(false);
-    toast("Perfil atualizado com sucesso!", "success");
-    onClose();
+    try {
+      await updateProfile({ name: name.trim(), course, bio: bio.trim(), skills });
+      toast("Perfil atualizado com sucesso!", "success");
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   }
 
   function focusInput(el: HTMLElement | null) {

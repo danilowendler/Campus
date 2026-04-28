@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LogoMark } from "@/components/campus/LogoMark";
 import { CampusButton } from "@/components/campus/CampusButton";
+import { createClient } from "@/lib/supabase/client";
 
 type AuthTab = "login" | "register";
 
@@ -11,11 +12,7 @@ interface FieldError {
   email?: string;
   password?: string;
   name?: string;
-}
-
-function setCookie(name: string, value: string, days = 7) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+  form?: string;
 }
 
 export function AuthScreen() {
@@ -66,15 +63,37 @@ export function AuthScreen() {
     setErrors({});
     setLoading(true);
 
-    // Simulate async auth
-    await new Promise((r) => setTimeout(r, 900));
+    const supabase = createClient();
+    const email = emailRef.current!.value.trim();
+    const password = passwordRef.current!.value;
 
-    setCookie("campus_session", "mock_session_token");
+    if (tab === "login") {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setErrors({ form: "E-mail ou senha incorretos." });
+        setLoading(false);
+        return;
+      }
+    } else {
+      const name = nameRef.current!.value.trim();
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name } },
+      });
+      if (error) {
+        setErrors({ form: error.message });
+        setLoading(false);
+        return;
+      }
+    }
+
     setSuccess(true);
     setLoading(false);
 
     const next = searchParams.get("next") ?? "/projects";
     router.push(next);
+    router.refresh();
   }
 
   function switchTab(next: AuthTab) {
@@ -225,6 +244,22 @@ export function AuthScreen() {
               onChange={() => errors.password && setErrors((e) => ({ ...e, password: undefined }))}
             />
           </Field>
+
+          {errors.form && (
+            <p
+              role="alert"
+              style={{
+                fontSize: "13px",
+                color: "#ff5577",
+                background: "rgba(237,21,90,.1)",
+                border: "1px solid rgba(237,21,90,.25)",
+                borderRadius: "var(--radius)",
+                padding: "10px 12px",
+              }}
+            >
+              {errors.form}
+            </p>
+          )}
 
           <div style={{ marginTop: "4px" }}>
             <CampusButton

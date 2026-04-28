@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { GlassCard } from "./GlassCard";
 import { SkillInput } from "./SkillInput";
 import { CampusButton } from "./CampusButton";
-import { useProjects } from "@/lib/projects-context";
+import { createProject } from "@/lib/actions/projects";
 
 interface CreateProjectProps {
   onClose: () => void;
@@ -32,9 +32,8 @@ const EMPTY_FORM: FormState = {
 };
 
 export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
-  const { addProject } = useProjects();
+  const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [mounted, setMounted] = useState(false);
 
@@ -73,20 +72,19 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    addProject({
-      title: form.title.trim(),
-      company: form.company.trim(),
-      description: form.description.trim(),
-      scope: form.scope.trim() || "A ser definido com o time.",
-      reward: form.reward.trim() || "A combinar.",
-      skills: form.skills,
-      slots: form.slots,
+    startTransition(async () => {
+      await createProject({
+        title: form.title.trim(),
+        company: form.company.trim(),
+        description: form.description.trim(),
+        scope: form.scope.trim() || "A ser definido com o time.",
+        reward: form.reward.trim() || "A combinar.",
+        skills: form.skills,
+        slots: form.slots,
+      });
+      onCreated?.();
+      onClose();
     });
-    setLoading(false);
-    onCreated?.();
-    onClose();
   }
 
   const inputBase: React.CSSProperties = {
@@ -279,8 +277,8 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
               <CampusButton type="button" variant="ghost" onClick={onClose}>
                 Cancelar
               </CampusButton>
-              <CampusButton type="submit" variant="primary" loading={loading}>
-                {loading ? "" : "Publicar projeto"}
+              <CampusButton type="submit" variant="primary" loading={isPending}>
+                {isPending ? "" : "Publicar projeto"}
               </CampusButton>
             </div>
           </form>
