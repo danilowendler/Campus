@@ -100,16 +100,32 @@
 
 ### Entregas
 
-- [ ] `app/projects/page.tsx` — rota protegida
-- [ ] `components/campus/ProjectCard.tsx` — card com título, empresa, descrição truncada (`-webkit-line-clamp: 2`), skills, `TeamSlots`, botões "Entrar" / "Sair" / "Excluir"
-- [ ] `components/campus/ProjectDetail.tsx` — modal overlay glass com detalhes completos: escopo, recompensas, roster de membros, vagas com `?`, ações de join/leave
-- [ ] `components/campus/CreateProject.tsx` — modal com inputs: título, empresa, descrição, skills (`SkillInput`), slider de vagas (2–10), botão com loader
-- [ ] `app/projects/page.tsx` — tabs "Todos" / "Meus", contador de projetos, botão "+ Novo projeto"
-- [ ] Estado vazio (`EmptyState`) com ícone Rocket e CTA
-- [ ] Dados mock em `lib/mock-data.ts` com 4–6 projetos de exemplo
-- [ ] Context `ProjectsContext` (`"use client"`) com actions: `addProject`, `joinProject`, `leaveProject`, `deleteProject`
+- [x] `app/(app)/projects/page.tsx` — rota protegida dentro do grupo `(app)` com layout autenticado
+- [x] `components/campus/ProjectCard.tsx` — card com título, empresa, descrição truncada (`-webkit-line-clamp: 2`), skills, `TeamSlots`, botões "Entrar" / "Sair" / "Excluir"
+- [x] `components/campus/ProjectDetail.tsx` — modal overlay glass com detalhes completos: escopo, recompensas, roster de membros, vagas com `?`, ações de join/leave
+- [x] `components/campus/CreateProject.tsx` — modal com inputs: título, empresa, descrição, skills (`SkillInput`), slider de vagas (2–10), botão com loader
+- [x] Tabs "Todos" / "Meus projetos" com contador de projetos e botão "+ Novo projeto"
+- [x] Estado vazio (`EmptyState`) com ícone Rocket e CTA contextual
+- [x] Dados mock em `lib/mock-data.ts` com 5 projetos reais (Ford, Raízen, Hapvida, Ambev Tech, Itaú BBA)
+- [x] Context `ProjectsProvider` (`"use client"`) com actions: `addProject`, `joinProject`, `leaveProject`, `deleteProject`
+- [x] Split de layouts por route group: `(public)/layout.tsx` (Nav pública) e `(app)/layout.tsx` (AppNav autenticado)
+- [x] `components/campus/AppNav.tsx` — navbar autenticada com logo, links centrais, botão de configurações e sign-out
 
-**Commit final:** `feat: projects feed ui — card grid, detail modal, create form, context with mock data`
+### Página de Configurações (`/settings`)
+
+- [x] `app/(app)/settings/page.tsx` — página de configurações com 4 seções:
+  - **Aparência** — seletor dark / claro / sistema com persistência em `localStorage`
+  - **Segurança** — formulário de troca de senha com validação inline e toast de confirmação
+  - **Notificações** — 4 toggles de preferências de e-mail
+  - **Sessão** — botão "Sair de todos os dispositivos" com variante danger
+- [x] `components/campus/ThemeProvider.tsx` — context de tema com `style.setProperty()` para aplicação imediata dos tokens CSS
+- [x] Suporte a light mode: tokens completos (`--bg`, `--text`, `--border`, `--nav-bg`, `--surface`, etc.) aplicados diretamente no `<html>` via JS
+- [x] `AppNav` totalmente theme-aware: usa `var(--nav-bg)`, `var(--surface)`, `var(--surface-2)` em vez de valores rgba hardcoded
+
+**Commits:**
+- `feat: projects feed ui — card grid, detail modal, create form, context with mock data`
+- `feat: split nav — public layout with landing nav, app layout with authenticated nav (settings + sign-out)`
+- `feat: settings page — theme toggle, password form, notification preferences, theme-aware navbar`
 
 ---
 

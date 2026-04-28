@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Campus — Construa com as pessoas certas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #111111;
+    --surface: #1c1c1c;
+    --border: #2a2a2a;
+    --border-strong: #3d3d3d;
+    --text: #f0f0f0;
+    --text-muted: #888888;
+    --text-faint: #555555;
+    --accent: #ff0055;
+    --accent-light: #2a0011;
+    --accent-hover: #e0004a;
+    --red: #ff4466;
+    --green: #00cc77;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 12px rgba(0,0,0,.3);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,.5), 0 8px 24px rgba(255,0,85,.08);
+    --font: 'Instrument Sans', sans-serif;
+  }
+  html { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 16px; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+  #root { min-height: 100vh; }
+
+  /* Utilities */
+  .sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
+  input, textarea, select { font-family: var(--font); font-size: 14px; }
+  button { font-family: var(--font); cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes shimmer { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+  .fade-up { animation: fadeUp .5s cubic-bezier(.22,1,.36,1) both; }
+  .fade-up-1 { animation-delay: .05s; }
+  .fade-up-2 { animation-delay: .12s; }
+  .fade-up-3 { animation-delay: .19s; }
+  .fade-up-4 { animation-delay: .26s; }
+  .fade-in { animation: fadeIn .35s ease both; }
+
+  /* Layout shells */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(17,17,17,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: -.3px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .nav-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .nav-actions { display: flex; gap: 8px; align-items: center; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; border-radius: var(--radius);
+    font-family: var(--font); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all .15s ease;
+    white-space: nowrap; padding: 9px 18px;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,0,85,.35); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { background: #222; border-color: #555; }
+  .btn-accent {
+    background: var(--accent); color: #fff;
+  }
+  .btn-accent:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,0,85,.3); }
+  .btn-ghost {
+    background: transparent; color: var(--text-muted);
+    border: none; padding: 8px 12px;
+  }
+  .btn-ghost:hover { color: var(--text); background: #222; }
+  .btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 12px; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-danger { background: #fff0f0; color: var(--red); border: 1px solid #ffc9c9; }
+  .btn-danger:hover { background: #ffe3e3; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card-clickable { cursor: pointer; }
+  .card-clickable:hover { transform: translateY(-2px); }
+
+  /* Form elements */
+  .field { margin-bottom: 16px; }
+  .label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .input {
+    width: 100%; padding: 10px 13px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: #161616; color: var(--text);
+    font-size: 14px; outline: none; transition: border-color .15s;
+  }
+  .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,0,85,.12); }
+  .input::placeholder { color: var(--text-faint); }
+  textarea.input { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .input-hint { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
+
+  /* Skill tags */
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--accent-light); color: #ff4d88;
+    border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 500;
+  }
+  .tag-gray { background: #222; color: var(--text-muted); }
+  .tag-remove { background: none; border: none; cursor: pointer; color: inherit; font-size: 14px; padding: 0; line-height: 1; }
+
+  /* Avatar */
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-light); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+  }
+  .avatar-lg { width: 56px; height: 56px; font-size: 20px; }
+  .avatar-sm { width: 28px; height: 28px; font-size: 11px; }
+
+  /* Badge */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 500;
+    background: #222; color: var(--text-muted);
+  }
+  .badge-blue { background: var(--accent-light); color: #ff4d88; }
+  .badge-green { background: #003322; color: #00cc77; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* Page containers */
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  .page-sm { max-width: 480px; margin: 0 auto; padding: 60px 24px; }
+
+  /* Section heading */
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text-faint); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 20px; }
+
+  /* Toast */
+  .toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: var(--text); color: var(--bg);
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    animation: fadeUp .3s ease both;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  }
+
+  /* Loader */
+  .loader { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+
+  /* Modal overlay */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.35);
+    backdrop-filter: blur(2px); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; animation: fadeIn .2s ease;
+  }
+  .modal {
+    background: var(--surface); border-radius: 18px;
+    width: 100%; max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.18);
+    overflow: hidden;
+    animation: fadeUp .25s cubic-bezier(.22,1,.36,1);
+  }
+  .modal-header { padding: 22px 24px 0; }
+  .modal-body { padding: 16px 24px 24px; }
+  .modal-title { font-size: 19px; font-weight: 600; }
+  .modal-close { float: right; background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text-faint); margin-top: -2px; }
+  .modal-close:hover { color: var(--text); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
+  .empty h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+  .empty p { font-size: 14px; line-height: 1.5; }
+
+  /* Project card */
+  .project-card { padding: 20px; }
+  .project-card-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .project-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .project-card-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .project-card-members { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+  .member-stack { display: flex; }
+  .member-stack .avatar { border: 2px solid var(--surface); margin-left: -6px; }
+  .member-stack .avatar:first-child { margin-left: 0; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+  /* Profile */
+  .profile-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* Landing specific */
+  .hero { text-align: center; padding: 100px 24px 80px; max-width: 720px; margin: 0 auto; }
+  .hero-eyebrow { font-size: 13px; font-weight: 500; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 20px; animation: fadeUp .5s ease both; }
+  .hero-title { font-size: clamp(36px, 6vw, 64px); font-weight: 600; letter-spacing: -.03em; line-height: 1.08; color: var(--text); margin-bottom: 20px; animation: fadeUp .5s .08s ease both; }
+  .hero-title em { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 36px; animation: fadeUp .5s .16s ease both; }
+  .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .5s .24s ease both; }
+  .how-section { padding: 80px 24px; border-top: 1px solid var(--border); }
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; max-width: 760px; margin: 0 auto; }
+  .how-step-num { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 14px; }
+  .how-step-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .how-step-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+  .featured-section { padding: 0 24px 80px; }
+  .featured-section-inner { max-width: 960px; margin: 0 auto; }
+  .cta-section { background: #1c1c1c; border: 1px solid #2a2a2a; color: var(--text); border-radius: 20px; padding: 64px 40px; text-align: center; max-width: 720px; margin: 0 auto 80px; }
+  .cta-section h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 600; letter-spacing: -.03em; margin-bottom: 12px; }
+  .cta-section p { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; }
+  .cta-section .btn { background: var(--accent); color: #fff; }
+  .cta-section .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 13px; color: var(--text-faint); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 2px; background: #1c1c1c; border-radius: 10px; padding: 3px; width: fit-content; margin-bottom: 28px; border: 1px solid var(--border); }
+  .tab { padding: 7px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; border: none; background: none; transition: all .15s; }
+  .tab.active { background: #2a2a2a; color: var(--text); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* Page header */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+  .page-header h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; }
+  .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Notifications dot */
+  .nav-user-btn { display: flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px 5px 6px; cursor: pointer; transition: border-color .15s; }
+  .nav-user-btn:hover { border-color: var(--accent); }
+  .nav-user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .page { padding: 24px 16px 60px; }
+    .how-section, .featured-section { padding-left: 16px; padding-right: 16px; }
+    .cta-section { padding: 40px 24px; margin: 0 16px 60px; }
+    .hero { padding: 60px 16px 60px; }
+    .nav { padding: 0 16px; }
+    .modal { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+// ── Storage helpers ────────────────────────────────────────────────────────────
+const db = {
+  get: (k, fallback) => { try { const v = localStorage.getItem('campus__'+k); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
+  set: (k, v) => { try { localStorage.setItem('campus__'+k, JSON.stringify(v)); } catch {} },
+};
+
+const initProjects = [
+  { id: 'p1', title: 'App de Finanças para Jovens', description: 'Uma plataforma simples de controle financeiro voltada para universitários que estão gerenciando dinheiro pela primeira vez.', skills: ['React Native', 'Node.js', 'Design UI'], slots: 4, members: ['João Silva', 'Ana Lima'], authorId: 'mock1', createdAt: Date.now() - 86400000*3 },
+  { id: 'p2', title: 'Plataforma de IA para Estudantes', description: 'Ferramenta que usa LLMs para ajudar alunos a estudar melhor — resumos automáticos, flashcards e geração de questões.', skills: ['Python', 'Machine Learning', 'Design'], slots: 5, members: ['Carlos Mendes'], authorId: 'mock2', createdAt: Date.now() - 86400000*5 },
+  { id: 'p3', title: 'Startup de Saúde Mental', description: 'Conectar estudantes em situação de burnout com psicólogos voluntários e grupos de apoio dentro da universidade.', skills: ['Mobile', 'Backend', 'Product'], slots: 3, members: ['Camila Torres', 'Vitor Nunes'], authorId: 'mock3', createdAt: Date.now() - 86400000 },
+];
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+const initials = (name) => name?.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() || '?';
+const colors = ['#3b5bdb','#7048e8','#2b8a3e','#e67700','#c92a2a','#0c8599'];
+const colorFor = (name) => colors[(name?.charCodeAt(0)||0) % colors.length];
+
+const AvatarEl = ({ name, size='', style={} }) => (
+  <div className={`avatar ${size}`} style={{ background: colorFor(name)+'22', color: colorFor(name), ...style }}>
+    {initials(name)}
+  </div>
+);
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+const ToastCtx = React.createContext(null);
+const ToastProvider = ({ children }) => {
+  const [toasts, setToasts] = useState([]);
+  const show = useCallback((msg) => {
+    const id = Date.now();
+    setToasts(t => [...t, { id, msg }]);
+    setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200);
+  }, []);
+  return (
+    <ToastCtx.Provider value={show}>
+      {children}
+      <div className="toast-wrap">
+        {toasts.map(t => <div key={t.id} className="toast">{t.msg}</div>)}
+      </div>
+    </ToastCtx.Provider>
+  );
+};
+const useToast = () => React.useContext(ToastCtx);
+
+// ── App state ──────────────────────────────────────────────────────────────────
+const AppCtx = React.createContext(null);
+const AppProvider = ({ children }) => {
+  const [user, setUser]   = useState(() => db.get('user', null));
+  const [projects, setProjects] = useState(() => {
+    const saved = db.get('projects', null);
+    return saved || initProjects;
+  });
+  const toast = useToast();
+
+  const login = (userData) => { db.set('user', userData); setUser(userData); };
+  const logout = () => { db.set('user', null); setUser(null); };
+  const updateProfile = (data) => {
+    const updated = { ...user, ...data };
+    db.set('user', updated); setUser(updated);
+    toast('Perfil atualizado ✓');
+  };
+  const addProject = (proj) => {
+    const p = { ...proj, id: 'p'+Date.now(), members: [user.name], authorId: user.id, createdAt: Date.now() };
+    const updated = [p, ...projects];
+    db.set('projects', updated); setProjects(updated);
+    toast('Projeto criado! 🚀');
+    return p;
+  };
+  const joinProject = (pid) => {
+    const updated = projects.map(p => {
+      if (p.id !== pid) return p;
+      if (p.members.includes(user.name)) return p;
+      return { ...p, members: [...p.members, user.name] };
+    });
+    db.set('projects', updated); setProjects(updated);
+    toast('Você entrou no projeto ✓');
+  };
+  const leaveProject = (pid) => {
+    const updated = projects.map(p => {
+      if (p.id !== pid) return p;
+      return { ...p, members: p.members.filter(m => m !== user.name) };
+    });
+    db.set('projects', updated); setProjects(updated);
+    toast('Você saiu do projeto');
+  };
+  const deleteProject = (pid) => {
+    const updated = projects.filter(p => p.id !== pid);
+    db.set('projects', updated); setProjects(updated);
+    toast('Projeto removido');
+  };
+
+  return (
+    <AppCtx.Provider value={{ user, login, logout, projects, addProject, joinProject, leaveProject, deleteProject, updateProfile }}>
+      {children}
+    </AppCtx.Provider>
+  );
+};
+const useApp = () => React.useContext(AppCtx);
+
+// ── Skill input ────────────────────────────────────────────────────────────────
+const SKILL_SUGGESTIONS = ['Python','JavaScript','React','Node.js','Design UI','Figma','Marketing','SQL','Machine Learning','Flutter','iOS','Android','Product','Backend','Data Science','DevOps','Java','TypeScript'];
+const SkillInput = ({ value, onChange, placeholder='Adicionar habilidade...' }) => {
+  const [input, setInput] = useState('');
+  const [show, setShow] = useState(false);
+  const filtered = SKILL_SUGGESTIONS.filter(s => s.toLowerCase().includes(input.toLowerCase()) && !value.includes(s)).slice(0,6);
+  const add = (skill) => {
+    const s = skill.trim();
+    if (s && !value.includes(s)) onChange([...value, s]);
+    setInput(''); setShow(false);
+  };
+  const remove = (s) => onChange(value.filter(x => x !== s));
+  return (
+    <div>
+      <div className="skills-wrap" style={{marginBottom:8}}>
+        {value.map(s => (
+          <span key={s} className="tag">
+            {s} <button className="tag-remove" onClick={()=>remove(s)}>×</button>
+          </span>
+        ))}
+      </div>
+      <div style={{position:'relative'}}>
+        <input
+          className="input" value={input} placeholder={placeholder}
+          onChange={e=>{setInput(e.target.value);setShow(true)}}
+          onFocus={()=>setShow(true)}
+          onBlur={()=>setTimeout(()=>setShow(false),150)}
+          onKeyDown={e=>{ if(e.key==='Enter'){e.preventDefault();if(input.trim())add(input);} }}
+          style={{width:'100%'}}
+        />
+        {show && (input || filtered.length > 0) && (
+          <div style={{position:'absolute',top:'calc(100% + 4px)',left:0,right:0,background:'#1c1c1c',border:'1px solid var(--border)',borderRadius:'var(--radius)',boxShadow:'0 8px 24px rgba(0,0,0,.5)',zIndex:50,overflow:'hidden'}}>
+            {filtered.map(s=>(
+              <div key={s} onMouseDown={()=>add(s)} style={{padding:'9px 13px',cursor:'pointer',fontSize:13,transition:'background .1s'}}
+                onMouseEnter={e=>e.target.style.background='#252525'}
+                onMouseLeave={e=>e.target.style.background='transparent'}
+              >{s}</div>
+            ))}
+            {input.trim() && !SKILL_SUGGESTIONS.find(s=>s.toLowerCase()===input.toLowerCase().trim()) && (
+              <div onMouseDown={()=>add(input)} style={{padding:'9px 13px',cursor:'pointer',fontSize:13,color:'#ff4d88',borderTop:filtered.length?'1px solid var(--border)':'none'}}
+                onMouseEnter={e=>e.target.style.background='#252525'}
+                onMouseLeave={e=>e.target.style.background='transparent'}
+              >+ Adicionar "{input}"</div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Auth screens ───────────────────────────────────────────────────────────────
+const CURSOS = ['Análise e Desenvolvimento de Sistemas','Ciência da Computação','Design','Engenharia de Software','Marketing Digital','Administração','Outros'];
+
+const AuthScreen = ({ onDone }) => {
+  const [mode, setMode] = useState('login'); // login | register
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ name:'', email:'', course:'', skills:[], bio:'' });
+  const toast = useToast();
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+  const { login } = useApp();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!form.email) return;
+    setLoading(true);
+    setTimeout(() => {
+      const userData = db.get('user_'+form.email, null);
+      if (userData) { login(userData); onDone(); }
+      else { setMode('register'); setStep(1); setLoading(false); toast('Email não encontrado. Crie sua conta!'); }
+    }, 800);
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    if (step === 1) { if (!form.name || !form.email) return; setStep(2); return; }
+    setLoading(true);
+    setTimeout(() => {
+      const userData = { id: 'u'+Date.now(), ...form };
+      db.set('user_'+form.email, userData);
+      login(userData);
+      onDone();
+    }, 800);
+  };
+
+  return (
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'24px'}}>
+      <div style={{textAlign:'center',marginBottom:36}} className="fade-up">
+        <div className="nav-logo" style={{justifyContent:'center',marginBottom:8,fontSize:22}}>
+          <span className="nav-logo-dot"/>Campus
+        </div>
+        <p style={{fontSize:14,color:'var(--text-muted)'}}>Construa projetos com as pessoas certas</p>
+      </div>
+
+      <div className="card fade-up fade-up-1" style={{width:'100%',maxWidth:400,padding:32}}>
+        <div className="tabs" style={{marginBottom:24}}>
+          <button className={`tab ${mode==='login'?'active':''}`} onClick={()=>{setMode('login');setStep(1)}}>Entrar</button>
+          <button className={`tab ${mode==='register'?'active':''}`} onClick={()=>setMode('register')}>Criar conta</button>
+        </div>
+
+        {mode === 'login' ? (
+          <form onSubmit={handleLogin}>
+            <div className="field">
+              <label className="label">Email da FIAP</label>
+              <input className="input" type="email" placeholder="rm12345@fiap.com.br" value={form.email} onChange={e=>set('email',e.target.value)} required/>
+            </div>
+            <button className="btn btn-primary" style={{width:'100%'}} disabled={loading}>
+              {loading ? <span className="loader" style={{borderTopColor:'#fff'}}/> : 'Entrar no Campus'}
+            </button>
+            <p style={{fontSize:12,color:'var(--text-faint)',marginTop:12,textAlign:'center'}}>Sem conta? <span style={{color:'var(--accent)',cursor:'pointer'}} onClick={()=>setMode('register')}>Criar agora</span></p>
+          </form>
+        ) : (
+          <form onSubmit={handleRegister}>
+            {step === 1 ? (
+              <>
+                <div style={{display:'flex',gap:4,marginBottom:20}}>
+                  <div style={{height:3,flex:1,background:'var(--accent)',borderRadius:2}}/>
+                  <div style={{height:3,flex:1,background:'var(--border)',borderRadius:2}}/>
+                </div>
+                <div className="field">
+                  <label className="label">Nome completo</label>
+                  <input className="input" placeholder="Seu nome" value={form.name} onChange={e=>set('name',e.target.value)} required/>
+                </div>
+                <div className="field">
+                  <label className="label">Email</label>
+                  <input className="input" type="email" placeholder="rm12345@fiap.com.br" value={form.email} onChange={e=>set('email',e.target.value)} required/>
+                </div>
+                <button className="btn btn-primary" style={{width:'100%'}} type="submit">Continuar →</button>
+              </>
+            ) : (
+              <>
+                <div style={{display:'flex',gap:4,marginBottom:20}}>
+                  <div style={{height:3,flex:1,background:'var(--accent)',borderRadius:2}}/>
+                  <div style={{height:3,flex:1,background:'var(--accent)',borderRadius:2}}/>
+                </div>
+                <div className="field">
+                  <label className="label">Curso</label>
+                  <select className="input" value={form.course} onChange={e=>set('course',e.target.value)} required>
+                    <option value="">Selecione seu curso</option>
+                    {CURSOS.map(c=><option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="field">
+                  <label className="label">Habilidades</label>
+                  <SkillInput value={form.skills} onChange={v=>set('skills',v)} placeholder="Ex: Python, Design, Marketing..."/>
+                  <p className="input-hint">Adicione suas principais habilidades</p>
+                </div>
+                <div className="field">
+                  <label className="label">Bio curta <span style={{color:'var(--text-faint)'}}>(opcional)</span></label>
+                  <textarea className="input" placeholder="Me conta um pouco sobre você..." value={form.bio} onChange={e=>set('bio',e.target.value)} style={{minHeight:64}}/>
+                </div>
+                <div style={{display:'flex',gap:8}}>
+                  <button className="btn btn-secondary" type="button" onClick={()=>setStep(1)}>← Voltar</button>
+                  <button className="btn btn-primary" style={{flex:1}} disabled={loading}>
+                    {loading ? <span className="loader" style={{borderTopColor:'#fff'}}/> : 'Criar conta 🚀'}
+                  </button>
+                </div>
+              </>
+            )}
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Landing Page ───────────────────────────────────────────────────────────────
+const LandingPage = ({ onEnter }) => {
+  const { projects } = useApp();
+  const featured = projects.slice(0,3);
+  return (
+    <div>
+      {/* Hero */}
+      <section className="hero">
+        <p className="hero-eyebrow">FIAP — Campus Beta</p>
+        <h1 className="hero-title">Construa projetos com as <em>pessoas certas.</em></h1>
+        <p className="hero-sub">Campus conecta estudantes para criar coisas reais.</p>
+        <div className="hero-cta">
+          <button className="btn btn-primary btn-lg" onClick={onEnter}>Entrar no Campus</button>
+          <button className="btn btn-secondary btn-lg" onClick={()=>document.getElementById('como').scrollIntoView({behavior:'smooth'})}>Como funciona</button>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="how-section" id="como">
+        <div style={{maxWidth:760,margin:'0 auto'}}>
+          <p className="section-title" style={{textAlign:'center'}}>Como funciona</p>
+          <div className="how-steps">
+            {[
+              {n:'01',t:'Crie seu perfil',d:'Coloque suas habilidades, curso e interesses. Leva menos de 2 minutos.'},
+              {n:'02',t:'Encontre um projeto',d:'Explore projetos abertos ou publique o seu com as habilidades que precisa.'},
+              {n:'03',t:'Monte seu time',d:'Entre no projeto, conecte com outros e comece a construir algo real.'},
+            ].map((s,i)=>(
+              <div key={i} className="fade-up" style={{animationDelay:`${i*.1}s`}}>
+                <div className="how-step-num">{s.n}</div>
+                <h3 className="how-step-title">{s.t}</h3>
+                <p className="how-step-desc">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured projects */}
+      <section className="featured-section">
+        <div className="featured-section-inner">
+          <p className="section-title">Projetos em destaque</p>
+          <div className="grid-2">
+            {featured.map((p,i)=>(
+              <div key={p.id} className={`card card-clickable project-card fade-up`} style={{animationDelay:`${i*.08}s`}} onClick={onEnter}>
+                <div style={{marginBottom:8}}>
+                  <span className="badge badge-blue" style={{marginBottom:10,display:'inline-block'}}>{p.members.length}/{p.slots} membros</span>
+                </div>
+                <p className="project-card-title">{p.title}</p>
+                <p className="project-card-desc">{p.description}</p>
+                <div className="skills-wrap" style={{marginBottom:14}}>
+                  {p.skills.slice(0,3).map(s=><span key={s} className="tag tag-gray" style={{fontSize:11}}>{s}</span>)}
+                </div>
+                <button className="btn btn-secondary btn-sm" onClick={onEnter}>Ver projeto →</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section style={{padding:'0 24px 80px'}}>
+        <div className="cta-section">
+          <h2>Entre no Campus e comece a construir.</h2>
+          <p>Você está a um clique de encontrar seu time.</p>
+          <button className="btn btn-lg" onClick={onEnter}>Começar agora →</button>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <span style={{display:'inline-flex',alignItems:'center',gap:6}}>
+          Campus
+          Campus · FIAP · MVP
+        </span>
+      </footer>
+    </div>
+  );
+};
+
+// ── Project card ───────────────────────────────────────────────────────────────
+const ProjectCard = ({ project, onClick, onJoin, onLeave, isMember }) => {
+  const full = project.members.length >= project.slots;
+  return (
+    <div className="card card-clickable project-card" onClick={onClick}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:6}}>
+        <span className={`badge ${full?'':'badge-blue'}`}>{project.members.length}/{project.slots} membros</span>
+        {full && <span className="badge" style={{background:'#fff0f0',color:'var(--red)'}}>Time completo</span>}
+      </div>
+      <p className="project-card-title">{project.title}</p>
+      <p className="project-card-desc">{project.description}</p>
+      <div className="skills-wrap" style={{marginBottom:14}}>
+        {project.skills.map(s=><span key={s} className="tag tag-gray" style={{fontSize:11}}>{s}</span>)}
+      </div>
+      <div className="project-card-footer">
+        <div className="project-card-members">
+          <div className="member-stack">
+            {project.members.slice(0,4).map(m=>(
+              <AvatarEl key={m} name={m} size="avatar-sm" style={{border:'2px solid var(--surface)'}}/>
+            ))}
+          </div>
+          <span>{project.members.length} {project.members.length===1?'membro':'membros'}</span>
+        </div>
+        {isMember ? (
+          <button className="btn btn-ghost btn-sm" onClick={e=>{e.stopPropagation();onLeave()}} style={{color:'var(--red)'}}>Sair</button>
+        ) : (
+          <button className="btn btn-accent btn-sm" disabled={full} onClick={e=>{e.stopPropagation();onJoin()}}>
+            {full ? 'Completo' : 'Entrar'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Project detail modal ───────────────────────────────────────────────────────
+const ProjectDetail = ({ project, onClose, onJoin, onLeave, onDelete, isMember, isAuthor }) => (
+  <div className="overlay" onClick={onClose}>
+    <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:520}}>
+      <div className="modal-header">
+        <button className="modal-close" onClick={onClose}>×</button>
+        <h2 className="modal-title">{project.title}</h2>
+        <p style={{fontSize:13,color:'var(--text-muted)',marginTop:6}}>{new Date(project.createdAt).toLocaleDateString('pt-BR')}</p>
+      </div>
+      <div className="modal-body">
+        <p style={{fontSize:14,lineHeight:1.6,color:'var(--text-muted)',marginBottom:20}}>{project.description}</p>
+
+        <p style={{fontSize:12,fontWeight:600,textTransform:'uppercase',letterSpacing:'.05em',color:'var(--text-faint)',marginBottom:8}}>Habilidades necessárias</p>
+        <div className="skills-wrap" style={{marginBottom:20}}>
+          {project.skills.map(s=><span key={s} className="tag">{s}</span>)}
+        </div>
+
+        <p style={{fontSize:12,fontWeight:600,textTransform:'uppercase',letterSpacing:'.05em',color:'var(--text-faint)',marginBottom:10}}>Time ({project.members.length}/{project.slots})</p>
+        <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:24}}>
+          {project.members.map(m=>(
+            <div key={m} style={{display:'flex',alignItems:'center',gap:10}}>
+              <AvatarEl name={m} size="avatar-sm"/>
+              <span style={{fontSize:14}}>{m}</span>
+            </div>
+          ))}
+          {Array.from({length: Math.max(0,project.slots-project.members.length)}).map((_,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:10}}>
+              <div className="avatar avatar-sm" style={{background:'var(--bg)',border:'1.5px dashed var(--border-strong)',color:'var(--text-faint)'}}>?</div>
+              <span style={{fontSize:13,color:'var(--text-faint)'}}>Vaga aberta</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          {isMember ? (
+            <button className="btn btn-danger" onClick={()=>{onLeave();onClose();}}>Sair do projeto</button>
+          ) : (
+            <button className="btn btn-accent" disabled={project.members.length>=project.slots} onClick={()=>{onJoin();onClose();}}>
+              {project.members.length>=project.slots ? 'Time completo' : '+ Entrar no projeto'}
+            </button>
+          )}
+          {isAuthor && <button className="btn btn-ghost btn-sm" onClick={()=>{onDelete();onClose();}} style={{color:'var(--red)',marginLeft:'auto'}}>Excluir projeto</button>}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ── Create project modal ───────────────────────────────────────────────────────
+const CreateProject = ({ onClose, onCreate }) => {
+  const [form, setForm] = useState({ title:'', description:'', skills:[], slots:3 });
+  const [loading, setLoading] = useState(false);
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+  const valid = form.title.trim() && form.description.trim();
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!valid) return;
+    setLoading(true);
+    setTimeout(() => { onCreate(form); onClose(); }, 600);
+  };
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-header">
+          <button className="modal-close" onClick={onClose}>×</button>
+          <h2 className="modal-title">Novo projeto</h2>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={submit}>
+            <div className="field">
+              <label className="label">Nome do projeto *</label>
+              <input className="input" placeholder="Ex: App de Finanças para Jovens" value={form.title} onChange={e=>set('title',e.target.value)} required/>
+            </div>
+            <div className="field">
+              <label className="label">Descrição *</label>
+              <textarea className="input" placeholder="O que você vai construir? Qual problema resolve?" value={form.description} onChange={e=>set('description',e.target.value)} required/>
+            </div>
+            <div className="field">
+              <label className="label">Habilidades necessárias</label>
+              <SkillInput value={form.skills} onChange={v=>set('skills',v)}/>
+            </div>
+            <div className="field">
+              <label className="label">Vagas no time: <strong>{form.slots}</strong></label>
+              <input type="range" min="2" max="10" value={form.slots} onChange={e=>set('slots',+e.target.value)} style={{width:'100%',accentColor:'var(--accent)'}}/>
+              <p className="input-hint">2 a 10 pessoas</p>
+            </div>
+            <button className="btn btn-primary" style={{width:'100%'}} disabled={!valid||loading}>
+              {loading ? <span className="loader" style={{borderTopColor:'#fff'}}/> : 'Criar projeto 🚀'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Projects page ──────────────────────────────────────────────────────────────
+const ProjectsPage = () => {
+  const { user, projects, addProject, joinProject, leaveProject, deleteProject } = useApp();
+  const [selected, setSelected] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [tab, setTab] = useState('all');
+  const toast = useToast();
+
+  const filtered = tab === 'mine'
+    ? projects.filter(p => p.members.includes(user.name) || p.authorId === user.id)
+    : projects;
+
+  return (
+    <div className="page">
+      <div className="page-header">
+        <div>
+          <h1>Projetos</h1>
+          <p>{projects.length} projetos ativos</p>
+        </div>
+        <button className="btn btn-primary" onClick={()=>setCreating(true)}>+ Novo projeto</button>
+      </div>
+
+      <div className="tabs">
+        <button className={`tab ${tab==='all'?'active':''}`} onClick={()=>setTab('all')}>Todos</button>
+        <button className={`tab ${tab==='mine'?'active':''}`} onClick={()=>setTab('mine')}>Meus</button>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="empty">
+          <div className="empty-icon">🚀</div>
+          <h3>Nenhum projeto ainda</h3>
+          <p>Seja o primeiro a criar algo aqui.</p>
+          <button className="btn btn-primary" style={{marginTop:16}} onClick={()=>setCreating(true)}>Criar projeto</button>
+        </div>
+      ) : (
+        <div className="grid-2">
+          {filtered.map((p,i)=>(
+            <div key={p.id} className="fade-up" style={{animationDelay:`${i*.05}s`}}>
+              <ProjectCard
+                project={p}
+                onClick={()=>setSelected(p)}
+                onJoin={()=>joinProject(p.id)}
+                onLeave={()=>leaveProject(p.id)}
+                isMember={p.members.includes(user.name)}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {selected && (
+        <ProjectDetail
+          project={selected}
+          onClose={()=>setSelected(null)}
+          onJoin={()=>joinProject(selected.id)}
+          onLeave={()=>leaveProject(selected.id)}
+          onDelete={()=>deleteProject(selected.id)}
+          isMember={selected.members.includes(user.name)}
+          isAuthor={selected.authorId === user.id}
+        />
+      )}
+      {creating && <CreateProject onClose={()=>setCreating(false)} onCreate={addProject}/>}
+    </div>
+  );
+};
+
+// ── Profile page ───────────────────────────────────────────────────────────────
+const ProfilePage = () => {
+  const { user, updateProfile, projects } = useApp();
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ name: user.name, course: user.course||'', skills: user.skills||[], bio: user.bio||'' });
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  const myProjects = projects.filter(p => p.authorId === user.id || p.members.includes(user.name));
+
+  const save = (e) => {
+    e.preventDefault();
+    updateProfile(form);
+    setEditing(false);
+  };
+
+  return (
+    <div className="page">
+      <div className="page-header">
+        <h1>Meu perfil</h1>
+        {!editing && <button className="btn btn-secondary" onClick={()=>setEditing(true)}>Editar</button>}
+      </div>
+
+      {editing ? (
+        <div className="card" style={{maxWidth:560}}>
+          <form onSubmit={save}>
+            <div className="field">
+              <label className="label">Nome</label>
+              <input className="input" value={form.name} onChange={e=>set('name',e.target.value)} required/>
+            </div>
+            <div className="field">
+              <label className="label">Curso</label>
+              <select className="input" value={form.course} onChange={e=>set('course',e.target.value)}>
+                <option value="">Selecione</option>
+                {CURSOS.map(c=><option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="field">
+              <label className="label">Habilidades</label>
+              <SkillInput value={form.skills} onChange={v=>set('skills',v)}/>
+            </div>
+            <div className="field">
+              <label className="label">Bio</label>
+              <textarea className="input" placeholder="Conte um pouco sobre você..." value={form.bio} onChange={e=>set('bio',e.target.value)}/>
+            </div>
+            <div style={{display:'flex',gap:8}}>
+              <button className="btn btn-primary" type="submit">Salvar</button>
+              <button className="btn btn-ghost" type="button" onClick={()=>setEditing(false)}>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div className="fade-in">
+          <div className="profile-header">
+            <AvatarEl name={user.name} size="avatar-lg"/>
+            <div>
+              <h2 style={{fontSize:22,fontWeight:600,letterSpacing:'-.02em'}}>{user.name}</h2>
+              {user.course && <p style={{fontSize:14,color:'var(--text-muted)',marginTop:3}}>{user.course}</p>}
+            </div>
+          </div>
+
+          {user.bio && (
+            <>
+              <p className="section-title">Bio</p>
+              <p style={{fontSize:14,lineHeight:1.6,color:'var(--text-muted)',marginBottom:28}}>{user.bio}</p>
+            </>
+          )}
+
+          <p className="section-title">Habilidades</p>
+          {(user.skills||[]).length > 0 ? (
+            <div className="skills-wrap" style={{marginBottom:32}}>
+              {user.skills.map(s=><span key={s} className="tag">{s}</span>)}
+            </div>
+          ) : (
+            <p style={{fontSize:14,color:'var(--text-faint)',marginBottom:28}}>Nenhuma habilidade adicionada</p>
+          )}
+
+          <p className="section-title">Projetos ({myProjects.length})</p>
+          {myProjects.length === 0 ? (
+            <p style={{fontSize:14,color:'var(--text-faint)'}}>Você não está em nenhum projeto ainda.</p>
+          ) : (
+            <div className="grid-2">
+              {myProjects.map(p=>(
+                <div key={p.id} className="card" style={{padding:'16px 18px'}}>
+                  <p style={{fontWeight:600,fontSize:15,marginBottom:4}}>{p.title}</p>
+                  <p style={{fontSize:12,color:'var(--text-muted)'}}>{p.members.length}/{p.slots} membros</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Nav ────────────────────────────────────────────────────────────────────────
+const Nav = ({ page, setPage, onLogout }) => {
+  const { user } = useApp();
+  return (
+    <nav className="nav">
+      <button className="nav-logo" onClick={()=>setPage('projects')} style={{background:'none',border:'none',cursor:'pointer'}}>
+        <span style={{color:'var(--accent)',fontWeight:700,letterSpacing:'-.01em'}}>FIAP</span>
+        <span style={{color:'var(--border-strong)',fontSize:14}}>|</span>
+        Campus
+      </button>
+      <div className="nav-actions">
+        <button className={`tab ${page==='projects'?'active':''}`} style={{padding:'6px 14px'}} onClick={()=>setPage('projects')}>Projetos</button>
+        <button className={`tab ${page==='profile'?'active':''}`} style={{padding:'6px 14px'}} onClick={()=>setPage('profile')}>Perfil</button>
+        <button className="nav-user-btn" onClick={onLogout} title="Sair">
+          <AvatarEl name={user?.name} size="avatar-sm"/>
+          <span className="nav-user-name" style={{display:'none'}}>{user?.name?.split(' ')[0]}</span>
+        </button>
+      </div>
+    </nav>
+  );
+};
+
+// ── App root ───────────────────────────────────────────────────────────────────
+const AppInner = () => {
+  const { user, logout } = useApp();
+  const [page, setPage] = useState('landing'); // landing | auth | projects | profile
+
+  useEffect(() => {
+    if (user && page === 'landing') setPage('projects');
+    if (user && page === 'auth') setPage('projects');
+  }, [user]);
+
+  const handleLogout = () => { logout(); setPage('landing'); };
+
+  if (!user) {
+    if (page === 'auth') return (
+      <div className="fade-in">
+        <Nav page="landing" setPage={setPage} onLogout={handleLogout}/>
+        <AuthScreen onDone={()=>setPage('projects')}/>
+      </div>
+    );
+    return (
+      <div className="fade-in">
+        <nav className="nav">
+          <button className="nav-logo" style={{background:'none',border:'none',cursor:'pointer'}} onClick={()=>setPage('landing')}>
+            <span className="nav-logo-dot"/>Campus
+          </button>
+          <button className="btn btn-primary" onClick={()=>setPage('auth')}>Entrar</button>
+        </nav>
+        <LandingPage onEnter={()=>setPage('auth')}/>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-in">
+      <Nav page={page} setPage={setPage} onLogout={handleLogout}/>
+      {page === 'projects' && <ProjectsPage/>}
+      {page === 'profile' && <ProfilePage/>}
+    </div>
+  );
+};
+
+const App = () => (
+  <ToastProvider>
+    <AppProvider>
+      <AppInner/>
+    </AppProvider>
+  </ToastProvider>
+);
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
