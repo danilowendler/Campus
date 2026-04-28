@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { LogoMark } from "./LogoMark";
 import { Avatar } from "./Avatar";
-import { MOCK_USER_NAME } from "@/lib/mock-data";
+import { useProfile } from "@/lib/profile-context";
 
 const NAV_LINKS = [
   { label: "Projetos", href: "/projects" },
@@ -12,6 +12,7 @@ const NAV_LINKS = [
 
 export function AppNav() {
   const router = useRouter();
+  const { profile } = useProfile();
 
   function handleSignOut() {
     document.cookie = "campus_session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
@@ -99,7 +100,7 @@ export function AppNav() {
 
         {/* Avatar + sair */}
         <div className="flex items-center gap-2 pl-1">
-          <Avatar name={MOCK_USER_NAME} size="sm" />
+          <Avatar name={profile.name} size="sm" />
           <button
             onClick={handleSignOut}
             className="w-9 h-9 rounded-xl inline-flex items-center justify-center transition-colors cursor-pointer"
