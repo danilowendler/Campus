@@ -41,14 +41,22 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {toasts.length > 0 && (
         <div
-          className="fixed bottom-6 right-6 z-[999] flex flex-col gap-2"
+          className="fixed z-[999] flex flex-col gap-2"
+          style={{
+            bottom: "max(24px, env(safe-area-inset-bottom, 24px))",
+            right: "max(16px, env(safe-area-inset-right, 16px))",
+            left: "max(16px, env(safe-area-inset-left, 16px))",
+            maxWidth: "calc(100vw - 32px)",
+            width: "fit-content",
+            marginLeft: "auto",
+          }}
           aria-live="polite"
           aria-label="Notificações"
         >
           {toasts.map((t) => (
             <div
               key={t.id}
-              className="px-[18px] py-3 rounded-xl text-[13px] font-medium max-w-xs"
+              className="px-[18px] py-3 rounded-xl text-[13px] font-medium w-full sm:max-w-xs"
               style={{
                 background: "rgba(20,20,24,.85)",
                 color: "var(--text)",

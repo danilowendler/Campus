@@ -9,6 +9,7 @@ const stats = [
 export function HeroSection() {
   return (
     <section
+      className="hero-section"
       style={{
         position: "relative",
         textAlign: "center",
@@ -120,7 +121,7 @@ export function HeroSection() {
 
       {/* Stats */}
       <div
-        className="fade-up fade-up-4"
+        className="hero-stats fade-up fade-up-4"
         style={{
           display: "flex",
           justifyContent: "center",

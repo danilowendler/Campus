@@ -115,13 +115,13 @@ function StatsRow() {
 
   return (
     <div
-      className="grid grid-cols-3 gap-4"
+      className="grid grid-cols-3 gap-3 sm:gap-4"
       style={{ animation: "fadeUp .65s cubic-bezier(.22,1,.36,1) .05s both" }}
     >
       {stats.map((s) => (
         <div
           key={s.label}
-          className="flex flex-col items-center gap-1 py-4 rounded-xl"
+          className="flex flex-col items-center gap-1 py-4 px-1 rounded-xl text-center"
           style={{
             background: "rgba(255,255,255,0.03)",
             border: "1px solid var(--border)",

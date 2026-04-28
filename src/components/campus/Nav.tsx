@@ -12,9 +12,9 @@ interface NavProps {
 export function Nav({ actions, className }: NavProps) {
   return (
     <nav
-      className={cn("sticky top-0 z-[100] flex items-center justify-between px-7 h-16", className)}
+      className={cn("sticky top-0 z-[100] flex items-center justify-between px-4 sm:px-7 h-16", className)}
       style={{
-        background: "rgba(9,9,11,0.55)",
+        background: "var(--nav-bg)",
         backdropFilter: "blur(18px) saturate(140%)",
         WebkitBackdropFilter: "blur(18px) saturate(140%)",
         borderBottom: "1px solid var(--border)",

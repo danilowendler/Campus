@@ -116,7 +116,7 @@ function ProjectsFeed() {
         <div
           className="grid gap-4"
           style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))",
             animation: "fadeUp .5s cubic-bezier(.22,1,.36,1) both",
             animationDelay: ".1s",
           }}
