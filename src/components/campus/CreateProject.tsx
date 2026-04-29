@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { GlassCard } from "./GlassCard";
 import { SkillInput } from "./SkillInput";
 import { CampusButton } from "./CampusButton";
 import { createProject } from "@/lib/actions/projects";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 interface CreateProjectProps {
   onClose: () => void;
@@ -36,6 +37,10 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const TITLE_ID = "create-project-title";
+
+  useFocusTrap(dialogRef, mounted);
 
   useEffect(() => {
     setMounted(true);
@@ -122,9 +127,10 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
       onClick={onClose}
       aria-modal="true"
       role="dialog"
-      aria-label="Novo projeto"
+      aria-labelledby={TITLE_ID}
     >
       <GlassCard
+        ref={dialogRef}
         className="w-full max-w-xl max-h-[92vh] overflow-y-auto"
         style={{
           transform: mounted ? "translateY(0) scale(1)" : "translateY(24px) scale(.97)",
@@ -137,7 +143,7 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
           {/* Modal header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
+              <h2 id={TITLE_ID} className="text-lg font-semibold" style={{ color: "var(--text)" }}>
                 Novo Projeto
               </h2>
               <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>

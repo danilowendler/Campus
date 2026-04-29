@@ -10,8 +10,8 @@ export function MeshBackground() {
         pointerEvents: "none",
       }}
     >
-      {/* Blob 1 — top-left, hot pink */}
       <div
+        className="mesh-blob"
         style={{
           position: "absolute",
           top: "-20%",
@@ -26,8 +26,8 @@ export function MeshBackground() {
           animation: "blobFloat 18s ease-in-out infinite",
         }}
       />
-      {/* Blob 2 — top-right, deep red */}
       <div
+        className="mesh-blob"
         style={{
           position: "absolute",
           top: "-15%",
@@ -43,8 +43,8 @@ export function MeshBackground() {
           animationDelay: "-6s",
         }}
       />
-      {/* Blob 3 — bottom-left, pink */}
       <div
+        className="mesh-blob"
         style={{
           position: "absolute",
           bottom: "-20%",
@@ -60,8 +60,8 @@ export function MeshBackground() {
           animationDelay: "-12s",
         }}
       />
-      {/* Blob 4 — center, subtle accent */}
       <div
+        className="mesh-blob"
         style={{
           position: "absolute",
           top: "30%",

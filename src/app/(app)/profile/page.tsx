@@ -3,7 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ProfilePageClient } from "@/components/campus/ProfilePageClient";
 
 export const metadata = {
-  title: "Perfil — Campus FIAP",
+  title: "Perfil",
+  description: "Visualize e edite seu perfil de estudante FIAP, suas skills e projetos.",
+  openGraph: {
+    title: "Perfil — Campus FIAP",
+    description: "Visualize e edite seu perfil de estudante FIAP, suas skills e projetos.",
+  },
 };
 
 export default async function ProfilePage() {

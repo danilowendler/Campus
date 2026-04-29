@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { GlassCard } from "./GlassCard";
 import { Badge } from "./Badge";
 import { SkillTag } from "./SkillTag";
 import { Avatar } from "./Avatar";
 import { CampusButton } from "./CampusButton";
 import { joinProject, leaveProject } from "@/lib/actions/projects";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import type { ProjectWithMembers } from "@/lib/supabase/types";
 
 interface ProjectDetailProps {
@@ -20,6 +21,10 @@ export function ProjectDetail({ project, currentUserId, isMember, onClose }: Pro
   const [isPending, startTransition] = useTransition();
   const [pendingAction, setPendingAction] = useState<"join" | "leave" | null>(null);
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = `project-title-${project.id}`;
+
+  useFocusTrap(dialogRef, mounted);
 
   const isAuthor = project.author_id === currentUserId;
   const members = Array.isArray(project.members)
@@ -74,9 +79,10 @@ export function ProjectDetail({ project, currentUserId, isMember, onClose }: Pro
       onClick={onClose}
       aria-modal="true"
       role="dialog"
-      aria-label={project.title}
+      aria-labelledby={titleId}
     >
       <GlassCard
+        ref={dialogRef}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         style={{
           transform: mounted ? "translateY(0) scale(1)" : "translateY(24px) scale(.97)",
@@ -103,7 +109,7 @@ export function ProjectDetail({ project, currentUserId, isMember, onClose }: Pro
                 <p className="text-xs font-medium mb-0.5" style={{ color: "var(--text-muted)" }}>
                   {project.company}
                 </p>
-                <h2 className="text-lg font-semibold leading-tight" style={{ color: "var(--text)" }}>
+                <h2 id={titleId} className="text-lg font-semibold leading-tight" style={{ color: "var(--text)" }}>
                   {project.title}
                 </h2>
               </div>

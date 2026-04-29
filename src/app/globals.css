@@ -258,6 +258,18 @@ body { min-height: 100vh; overflow-x: hidden; }
   }
 }
 
+/* ── Focus visible — anel consistente em todos os interativos ─────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Botões e links com border-radius maior herdam o raio do elemento */
+button:focus-visible,
+a:focus-visible {
+  border-radius: inherit;
+}
+
 /* ── Landing Page ─────────────────────────────────────────────────────────── */
 .footer-fiap-link {
   color: var(--text-muted);
@@ -306,5 +318,25 @@ body { min-height: 100vh; overflow-x: hidden; }
 @media (max-width: 600px) {
   .hero-section { padding: 60px 16px 60px !important; }
   .hero-stats   { gap: 28px !important; margin-top: 48px !important; }
+  .hero-ctas    { flex-direction: column !important; align-items: center !important; }
+  .hero-ctas a, .hero-ctas button { width: 100% !important; max-width: 320px !important; }
   .cta-section  { padding: 48px 24px !important; margin: 0 16px 60px !important; }
+}
+
+/* ── prefers-reduced-motion ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  /* Blobs */
+  .mesh-blob { animation: none !important; }
+
+  /* Marquee — pause in place */
+  .marquee-track { animation-play-state: paused !important; }
+
+  /* Tilt — disable perspective transforms via CSS flag read by TiltCard */
+  .tilt-reduced { transform: none !important; transition: none !important; }
+
+  /* Hero / section fade-up */
+  .fade-up, .fade-in { animation: none !important; opacity: 1 !important; }
+
+  /* gradientShift on hero title */
+  em[style*="gradientShift"] { animation: none !important; }
 }

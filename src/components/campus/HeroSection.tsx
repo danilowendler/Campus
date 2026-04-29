@@ -101,11 +101,8 @@ export function HeroSection() {
         construa projetos reais para empresas parceiras.
       </p>
 
-      {/* CTAs */}
-      <div
-        className="fade-up fade-up-3"
-        style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}
-      >
+      {/* CTA */}
+      <div className="fade-up fade-up-3" style={{ display: "flex", justifyContent: "center" }}>
         <a href="/login">
           <CampusButton variant="primary" size="lg">
             Entrar na plataforma
@@ -114,9 +111,6 @@ export function HeroSection() {
             </svg>
           </CampusButton>
         </a>
-        <CampusButton variant="secondary" size="lg">
-          Ver projetos
-        </CampusButton>
       </div>
 
       {/* Stats */}

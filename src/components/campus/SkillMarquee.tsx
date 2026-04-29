@@ -22,6 +22,7 @@ export function SkillMarquee() {
         }}
       >
         <div
+          className="marquee-track"
           style={{
             display: "flex",
             gap: 12,
