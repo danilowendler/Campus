@@ -52,17 +52,21 @@ export function ProfileProvider({ children, initialData }: ProfileProviderProps)
 
   const updateProfile = useCallback(
     async (patch: Partial<Omit<UserProfile, "id" | "email">>) => {
-      // Atualização otimista: UI reflete imediatamente
-      setProfile((prev) => ({ ...prev, ...patch }));
-      // Persiste no banco
+      // Usa o setter funcional para ler o estado mais recente (evita stale closure)
+      let merged: UserProfile | null = null;
+      setProfile((prev) => {
+        merged = { ...prev, ...patch };
+        return merged;
+      });
+      // Persiste no banco com os valores já mesclados
       await updateProfileAction({
-        name: patch.name ?? profile.name,
-        course: patch.course ?? profile.course,
-        bio: patch.bio ?? profile.bio,
-        skills: patch.skills ?? profile.skills,
+        name: merged ? (merged as UserProfile).name : patch.name ?? "",
+        course: merged ? (merged as UserProfile).course : patch.course ?? "Tecnologia",
+        bio: merged ? (merged as UserProfile).bio : patch.bio ?? "",
+        skills: merged ? (merged as UserProfile).skills : patch.skills ?? [],
       });
     },
-    [profile]
+    [] // sem dependência em `profile` — lê via setter funcional
   );
 
   return (

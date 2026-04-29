@@ -16,12 +16,16 @@ interface ProjectCardProps {
   onViewDetail: (project: ProjectWithMembers) => void;
 }
 
-export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: ProjectCardProps) {
+export function ProjectCard({ project, currentUserId, isMember: isMemberProp, onViewDetail }: ProjectCardProps) {
   const [isPending, startTransition] = useTransition();
   const [pendingAction, setPendingAction] = useState<"join" | "leave" | "delete" | null>(null);
 
+  // Optimistic local state — reflete imediatamente sem esperar revalidatePath
+  const [optimisticMember, setOptimisticMember] = useState(isMemberProp);
+  const [optimisticCount, setOptimisticCount] = useState(project.member_count);
+
   const isAuthor = project.author_id === currentUserId;
-  const isFull = project.status === "full" || project.member_count >= project.slots;
+  const isFull = project.status === "full" || optimisticCount >= project.slots;
 
   const members = Array.isArray(project.members)
     ? (project.members as { name: string; course: string }[])
@@ -29,19 +33,41 @@ export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: 
 
   function handleJoin(e: React.MouseEvent) {
     e.stopPropagation();
+    if (optimisticMember || isFull) return;
     setPendingAction("join");
+    // Optimistic update imediato
+    setOptimisticMember(true);
+    setOptimisticCount((c) => c + 1);
     startTransition(async () => {
-      await joinProject(project.id);
-      setPendingAction(null);
+      try {
+        await joinProject(project.id);
+      } catch {
+        // Reverte se falhar
+        setOptimisticMember(false);
+        setOptimisticCount((c) => c - 1);
+      } finally {
+        setPendingAction(null);
+      }
     });
   }
 
   function handleLeave(e: React.MouseEvent) {
     e.stopPropagation();
+    if (!optimisticMember) return;
     setPendingAction("leave");
+    // Optimistic update imediato
+    setOptimisticMember(false);
+    setOptimisticCount((c) => Math.max(0, c - 1));
     startTransition(async () => {
-      await leaveProject(project.id);
-      setPendingAction(null);
+      try {
+        await leaveProject(project.id);
+      } catch {
+        // Reverte se falhar
+        setOptimisticMember(true);
+        setOptimisticCount((c) => c + 1);
+      } finally {
+        setPendingAction(null);
+      }
     });
   }
 
@@ -49,8 +75,11 @@ export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: 
     e.stopPropagation();
     setPendingAction("delete");
     startTransition(async () => {
-      await deleteProject(project.id);
-      setPendingAction(null);
+      try {
+        await deleteProject(project.id);
+      } finally {
+        setPendingAction(null);
+      }
     });
   }
 
@@ -116,7 +145,11 @@ export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: 
 
       {/* Footer: team + actions */}
       <div className="flex items-center justify-between gap-3 pt-1 mt-auto">
-        <TeamSlots members={members} slots={project.slots} stackBg="var(--bg-elevated)" />
+        <TeamSlots
+          members={members}
+          slots={project.slots}
+          stackBg="var(--bg-elevated)"
+        />
 
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           {isAuthor && (
@@ -136,7 +169,7 @@ export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: 
             </CampusButton>
           )}
 
-          {isMember && !isAuthor && (
+          {optimisticMember && !isAuthor && (
             <CampusButton
               variant="secondary"
               size="sm"
@@ -147,7 +180,7 @@ export function ProjectCard({ project, currentUserId, isMember, onViewDetail }: 
             </CampusButton>
           )}
 
-          {!isMember && (
+          {!optimisticMember && !isAuthor && (
             <CampusButton
               variant={isFull ? "ghost" : "primary"}
               size="sm"
