@@ -152,29 +152,37 @@
 
 ## Milestone 6 — Integração Supabase (Backend)
 
-**Branch:** `feat/supabase-integration`  
+**Branch:** `feat/supabase-integration` → **PR #8 mergeado em `main`**  
 **Objetivo:** Substituir todos os dados mock por Supabase real; autenticação funcional.
 
 ### Entregas
 
-- [ ] Criar projeto no Supabase e adicionar `.env.local` com `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- [ ] `lib/supabase/client.ts` — cliente browser (`createBrowserClient`)
-- [ ] `lib/supabase/server.ts` — cliente server (`createServerClient` com cookies)
-- [ ] Migrations SQL:
-  ```sql
-  -- users, projects, memberships (ver data models no CLAUDE.md)
-  ```
-- [ ] RLS policies: `users` (self), `projects` (authenticated read, author write), `memberships` (self)
-- [ ] Supabase Auth configurado com validação de domínio `@fiap.com.br` (hook `before_user_created` ou trigger)
-- [ ] `middleware.ts` atualizado com sessão real via `@supabase/ssr`
-- [ ] `app/(auth)/login/page.tsx` — `signInWithPassword` e `signUp` reais
-- [ ] `app/projects/page.tsx` — substituir mock por `select * from projects` via Server Component
-- [ ] `components/campus/CreateProject.tsx` — insert real com optimistic update
-- [ ] `components/campus/ProjectCard.tsx` — join/leave via upsert/delete em `memberships`
-- [ ] `app/profile/page.tsx` — load e update real de `users`
-- [ ] Seed SQL com 4 projetos de exemplo para ambiente de dev
+- [x] Criar projeto no Supabase e adicionar `.env.local` com `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- [x] `lib/supabase/client.ts` — cliente browser (`createBrowserClient`)
+- [x] `lib/supabase/server.ts` — cliente server (`createServerClient` com cookies)
+- [x] Migrations SQL: `users`, `projects`, `memberships` com triggers, indexes em todas as FKs, view `projects_with_members` (evita N+1), função `sync_project_status`
+- [x] RLS policies: `users` (self), `projects` (authenticated read, author write), `memberships` (self)
+- [x] Validação de domínio `@fiap.com.br` no trigger `handle_new_user` + `CHECK CONSTRAINT` na tabela — server-side enforcement
+- [x] `proxy.ts` atualizado com sessão real via `@supabase/ssr` (`getUser()`, não `getSession()`)
+- [x] `AuthScreen` — `signInWithPassword` e `signUp` reais; trata fluxo de confirmação de e-mail
+- [x] `app/projects/page.tsx` — Server Component com `select * from projects_with_members`
+- [x] `CreateProject.tsx` — Server Action com `revalidatePath`
+- [x] `ProjectCard.tsx` — join/leave via Server Actions com **optimistic update** (reverte se falhar)
+- [x] `app/profile/page.tsx` — Server Component; `ProfileEdit` persiste via Server Action
+- [x] Seed SQL com 4 projetos de exemplo (usa primeiro `auth.users` existente)
 
-**Commit final:** `feat: supabase integration — auth, rls, real data for projects and profiles`
+### Auditoria de segurança (migration 000004)
+
+- [x] Policy `users_insert_blocked` — bloqueia INSERT direto por clientes autenticados
+- [x] `sync_project_status` verifica que chamador é membro/autor antes de executar
+- [x] `set_updated_at` com `security definer` + `set search_path = ''`
+- [x] Corrigido stale closure em `updateProfile` no `profile-context`
+
+**Commits:**
+- `feat: supabase integration — auth, rls, real data for projects and profiles`
+- `fix: seed usa primeiro auth.users existente em vez de UUID placeholder`
+- `fix: auth flow — router.refresh() before push, handle email confirmation on signUp`
+- `security: auditoria e correções de segurança + optimistic updates`
 
 ---
 
