@@ -5,6 +5,7 @@ import { CampusButton } from "./CampusButton";
 import { SkillInput } from "./SkillInput";
 import { useProfile, COURSES, type Course } from "@/lib/profile-context";
 import { useToast } from "./Toast";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 interface ProfileEditProps {
   onClose: () => void;
@@ -45,6 +46,10 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
   const [saving, setSaving] = useState(false);
 
   const overlayRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const TITLE_ID = "profile-edit-title";
+
+  useFocusTrap(dialogRef, true);
 
   // close on overlay click
   function handleOverlayClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -89,8 +94,12 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
       onClick={handleOverlayClick}
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center sm:p-4"
       style={{ background: "rgba(0,0,0,.65)", backdropFilter: "blur(6px)" }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={TITLE_ID}
     >
       <div
+        ref={dialogRef}
         className="w-full sm:max-w-lg flex flex-col rounded-t-2xl sm:rounded-2xl overflow-hidden"
         style={{
           background: "rgba(16,16,20,.96)",
@@ -108,7 +117,7 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
           style={{ borderBottom: "1px solid var(--border)" }}
         >
           <div>
-            <h2 className="text-[15px] font-semibold" style={{ color: "var(--text)" }}>
+            <h2 id={TITLE_ID} className="text-[15px] font-semibold" style={{ color: "var(--text)" }}>
               Editar perfil
             </h2>
             <p className="text-[12px] mt-0.5" style={{ color: "var(--text-muted)" }}>

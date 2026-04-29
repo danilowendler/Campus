@@ -60,10 +60,12 @@ export function FeaturedProjectsSection() {
 
   return (
     <section
+      id="projetos"
       style={{
         padding: "0 28px 80px",
         maxWidth: 1240,
         margin: "0 auto",
+        scrollMarginTop: 80,
       }}
     >
       {/* Header */}

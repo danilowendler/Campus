@@ -18,10 +18,47 @@ const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://campus.fiap.com.br";
+
 export const metadata: Metadata = {
-  title: "Campus FIAP — Construa com as pessoas certas",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Campus FIAP — Construa com as pessoas certas",
+    template: "%s — Campus FIAP",
+  },
   description:
     "Rede profissional fechada para alunos FIAP. Empresas parceiras publicam desafios reais; alunos formam times e ganham recompensas de carreira.",
+  keywords: ["FIAP", "projetos", "estudantes", "carreira", "tecnologia", "times"],
+  authors: [{ name: "FIAP" }],
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: BASE_URL,
+    siteName: "Campus FIAP",
+    title: "Campus FIAP — Construa com as pessoas certas",
+    description:
+      "Rede profissional fechada para alunos FIAP. Empresas parceiras publicam desafios reais; alunos formam times e ganham recompensas de carreira.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Campus FIAP",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Campus FIAP — Construa com as pessoas certas",
+    description:
+      "Rede profissional fechada para alunos FIAP. Empresas parceiras publicam desafios reais; alunos formam times e ganham recompensas de carreira.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({

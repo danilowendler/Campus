@@ -2,7 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ProjectsFeed } from "@/components/campus/ProjectsFeed";
 
 export const metadata = {
-  title: "Projetos — Campus FIAP",
+  title: "Projetos",
+  description: "Explore projetos reais publicados por empresas parceiras e entre no time certo para você.",
+  openGraph: {
+    title: "Projetos — Campus FIAP",
+    description: "Explore projetos reais publicados por empresas parceiras e entre no time certo para você.",
+  },
 };
 
 export default async function ProjectsPage() {
