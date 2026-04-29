@@ -136,14 +136,17 @@
 
 ### Entregas
 
-- [ ] `app/profile/page.tsx` — rota protegida
-- [ ] `components/campus/ProfileHeader.tsx` — avatar grande, nome, curso, bio, botão "Editar perfil"
-- [ ] `components/campus/ProfileEdit.tsx` — formulário inline ou modal: nome, curso (select com as 5 opções), bio, `SkillInput`
-- [ ] Seção "Meus projetos" listando os projetos em que o usuário é membro (reutiliza `ProjectCard` em modo compacto)
-- [ ] Opção de courses: Tecnologia, Design, Negócios, Saúde, Educação
-- [ ] Toast de confirmação ao salvar
+- [x] `lib/profile-context.tsx` — `ProfileProvider` com estado mock (Danilo Wendler): nome, e-mail, curso, bio, skills; wired no `(app)/layout.tsx` para que o `AppNav` reflita edições em tempo real
+- [x] `app/(app)/profile/page.tsx` — rota protegida com `ProfileHeader`, row de 3 stats (membro / autor / skills), seção "Meus Projetos" com grid de `ProjectCard`; ambos os modais (`ProfileEdit` e `ProjectDetail`) elevados ao root da página para evitar quebra de `position: fixed` por stacking context
+- [x] `components/campus/ProfileHeader.tsx` — cover strip com gradiente e orbs decorativos, `Avatar` variante `lg` sobreposto na borda, nome, badge de curso, e-mail, bio, pills de skills; recebe `onEdit` como prop (sem modais internos)
+- [x] `components/campus/ProfileEdit.tsx` — modal glass com `backdropFilter`; campos: nome (validação inline), select de curso (5 opções), textarea de bio, `SkillInput`; loader de 650 ms + Toast de sucesso; comportamento mobile-first: sheet que sobe da base (`items-end`) com `maxHeight: 90dvh`
+- [x] Seção "Meus projetos" filtra por `profile.name` (live context) em vez de `MOCK_USER_NAME` hardcoded — renomear o perfil reflete imediatamente
+- [x] `StatsRow` com contadores reativos: projetos como membro, projetos criados, skills cadastradas
+- [x] `EmptyState` com ícone de foguete e CTA contextual
+- [x] `ProjectDetail` corrigido: overlay com `pt-20` para o card não ficar colado no navbar de 64px
+- [x] Toast de confirmação ao salvar
 
-**Commit final:** `feat: student profile page — view, edit form, my projects section`
+**Commit final:** `feat: student profile page — view, edit form, my projects section` — PR #6 mergeado em `main`
 
 ---
 

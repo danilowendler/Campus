@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
-import { MOCK_USER_ID, MOCK_USER_NAME } from "./mock-data";
+import type { UserRow } from "@/lib/supabase/types";
+import { updateProfile as updateProfileAction } from "@/lib/actions/profile";
 
 export type Course =
   | "Tecnologia"
@@ -29,28 +30,43 @@ export interface UserProfile {
 
 interface ProfileContextValue {
   profile: UserProfile;
-  updateProfile: (patch: Partial<Omit<UserProfile, "id" | "email">>) => void;
+  updateProfile: (patch: Partial<Omit<UserProfile, "id" | "email">>) => Promise<void>;
 }
-
-const INITIAL_PROFILE: UserProfile = {
-  id: MOCK_USER_ID,
-  name: MOCK_USER_NAME,
-  email: "danilo.wendler@fiap.com.br",
-  course: "Tecnologia",
-  bio: "Estudante de Engenharia de Software apaixonado por produtos digitais. Experiência em desenvolvimento fullstack, design systems e automação de processos.",
-  skills: ["React", "TypeScript", "Node.js", "Next.js", "Tailwind CSS"],
-};
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
 
-export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
+interface ProfileProviderProps {
+  children: ReactNode;
+  initialData?: UserRow | null;
+}
+
+export function ProfileProvider({ children, initialData }: ProfileProviderProps) {
+  const [profile, setProfile] = useState<UserProfile>(() => ({
+    id: initialData?.id ?? "",
+    name: initialData?.name ?? "",
+    email: initialData?.email ?? "",
+    course: (initialData?.course as Course) ?? "Tecnologia",
+    bio: initialData?.bio ?? "",
+    skills: initialData?.skills ?? [],
+  }));
 
   const updateProfile = useCallback(
-    (patch: Partial<Omit<UserProfile, "id" | "email">>) => {
-      setProfile((prev) => ({ ...prev, ...patch }));
+    async (patch: Partial<Omit<UserProfile, "id" | "email">>) => {
+      // Usa o setter funcional para ler o estado mais recente (evita stale closure)
+      let merged: UserProfile | null = null;
+      setProfile((prev) => {
+        merged = { ...prev, ...patch };
+        return merged;
+      });
+      // Persiste no banco com os valores já mesclados
+      await updateProfileAction({
+        name: merged ? (merged as UserProfile).name : patch.name ?? "",
+        course: merged ? (merged as UserProfile).course : patch.course ?? "Tecnologia",
+        bio: merged ? (merged as UserProfile).bio : patch.bio ?? "",
+        skills: merged ? (merged as UserProfile).skills : patch.skills ?? [],
+      });
     },
-    []
+    [] // sem dependência em `profile` — lê via setter funcional
   );
 
   return (

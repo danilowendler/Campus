@@ -1,34 +1,60 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 const PROTECTED = ["/projects", "/profile", "/settings"];
-const SESSION_COOKIE = "campus_session";
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const hasSession = request.cookies.has(SESSION_COOKIE);
+export async function proxy(request: NextRequest) {
+  let response = NextResponse.next({ request });
 
-  const isProtected = PROTECTED.some(
-    (path) => pathname === path || pathname.startsWith(path + "/")
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
   );
 
-  if (isProtected && !hasSession) {
+  // Renova a sessão — obrigatório antes de qualquer verificação
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+  const isProtected = PROTECTED.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+
+  if (isProtected && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname === "/login" && hasSession) {
-    const projectsUrl = request.nextUrl.clone();
-    projectsUrl.pathname = "/projects";
-    projectsUrl.searchParams.delete("next");
-    return NextResponse.redirect(projectsUrl);
+  if (pathname === "/login" && user) {
+    const next = request.nextUrl.searchParams.get("next") ?? "/projects";
+    const dest = request.nextUrl.clone();
+    dest.pathname = next;
+    dest.searchParams.delete("next");
+    return NextResponse.redirect(dest);
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ["/projects/:path*", "/profile/:path*", "/settings/:path*", "/login"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

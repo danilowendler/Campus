@@ -1,61 +1,97 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { GlassCard } from "./GlassCard";
 import { Badge } from "./Badge";
 import { SkillTag } from "./SkillTag";
 import { TeamSlots } from "./TeamSlots";
 import { CampusButton } from "./CampusButton";
-import { useProjects } from "@/lib/projects-context";
-import type { Project } from "@/lib/mock-data";
+import { joinProject, leaveProject, deleteProject } from "@/lib/actions/projects";
+import type { ProjectWithMembers } from "@/lib/supabase/types";
 
 interface ProjectCardProps {
-  project: Project;
-  onViewDetail: (project: Project) => void;
+  project: ProjectWithMembers;
+  currentUserId: string;
+  isMember: boolean;
+  onViewDetail: (project: ProjectWithMembers) => void;
 }
 
-export function ProjectCard({ project, onViewDetail }: ProjectCardProps) {
-  const { joinProject, leaveProject, deleteProject, isMember, isAuthor } = useProjects();
-  const [loading, setLoading] = useState<"join" | "leave" | null>(null);
+export function ProjectCard({ project, currentUserId, isMember: isMemberProp, onViewDetail }: ProjectCardProps) {
+  const [isPending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<"join" | "leave" | "delete" | null>(null);
 
-  const memberOf = isMember(project.id);
-  const authorOf = isAuthor(project.id);
-  const isFull = project.status === "full" || project.members.length >= project.slots;
+  // Optimistic local state — reflete imediatamente sem esperar revalidatePath
+  const [optimisticMember, setOptimisticMember] = useState(isMemberProp);
+  const [optimisticCount, setOptimisticCount] = useState(project.member_count);
 
-  async function handleJoin(e: React.MouseEvent) {
+  const isAuthor = project.author_id === currentUserId;
+  const isFull = project.status === "full" || optimisticCount >= project.slots;
+
+  const members = Array.isArray(project.members)
+    ? (project.members as { name: string; course: string }[])
+    : [];
+
+  function handleJoin(e: React.MouseEvent) {
     e.stopPropagation();
-    setLoading("join");
-    await new Promise((r) => setTimeout(r, 600));
-    joinProject(project.id);
-    setLoading(null);
+    if (optimisticMember || isFull) return;
+    setPendingAction("join");
+    // Optimistic update imediato
+    setOptimisticMember(true);
+    setOptimisticCount((c) => c + 1);
+    startTransition(async () => {
+      try {
+        await joinProject(project.id);
+      } catch {
+        // Reverte se falhar
+        setOptimisticMember(false);
+        setOptimisticCount((c) => c - 1);
+      } finally {
+        setPendingAction(null);
+      }
+    });
   }
 
-  async function handleLeave(e: React.MouseEvent) {
+  function handleLeave(e: React.MouseEvent) {
     e.stopPropagation();
-    setLoading("leave");
-    await new Promise((r) => setTimeout(r, 600));
-    leaveProject(project.id);
-    setLoading(null);
+    if (!optimisticMember) return;
+    setPendingAction("leave");
+    // Optimistic update imediato
+    setOptimisticMember(false);
+    setOptimisticCount((c) => Math.max(0, c - 1));
+    startTransition(async () => {
+      try {
+        await leaveProject(project.id);
+      } catch {
+        // Reverte se falhar
+        setOptimisticMember(true);
+        setOptimisticCount((c) => c + 1);
+      } finally {
+        setPendingAction(null);
+      }
+    });
   }
 
   function handleDelete(e: React.MouseEvent) {
     e.stopPropagation();
-    deleteProject(project.id);
+    setPendingAction("delete");
+    startTransition(async () => {
+      try {
+        await deleteProject(project.id);
+      } finally {
+        setPendingAction(null);
+      }
+    });
   }
 
   return (
     <GlassCard
       className="flex flex-col gap-4 p-5 cursor-pointer group transition-transform duration-200 hover:-translate-y-0.5"
-      style={{
-        boxShadow:
-          "0 1px 0 rgba(255,255,255,0.05) inset, 0 24px 60px -24px rgba(0,0,0,.6)",
-      }}
+      style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.05) inset, 0 24px 60px -24px rgba(0,0,0,.6)" }}
       onClick={() => onViewDetail(project)}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          {/* Company logo placeholder */}
           <span
             className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold flex-shrink-0"
             style={{
@@ -83,7 +119,6 @@ export function ProjectCard({ project, onViewDetail }: ProjectCardProps) {
         >
           {project.title}
         </h3>
-        {/* Description — clamped to 2 lines */}
         <p
           className="text-sm leading-relaxed"
           style={{
@@ -111,20 +146,17 @@ export function ProjectCard({ project, onViewDetail }: ProjectCardProps) {
       {/* Footer: team + actions */}
       <div className="flex items-center justify-between gap-3 pt-1 mt-auto">
         <TeamSlots
-          members={project.members}
+          members={members}
           slots={project.slots}
           stackBg="var(--bg-elevated)"
         />
 
-        {/* Actions */}
-        <div
-          className="flex items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {authorOf && (
+        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+          {isAuthor && (
             <CampusButton
               variant="danger"
               size="sm"
+              loading={isPending && pendingAction === "delete"}
               onClick={handleDelete}
               aria-label="Excluir projeto"
             >
@@ -137,23 +169,23 @@ export function ProjectCard({ project, onViewDetail }: ProjectCardProps) {
             </CampusButton>
           )}
 
-          {memberOf && !authorOf && (
+          {optimisticMember && !isAuthor && (
             <CampusButton
               variant="secondary"
               size="sm"
-              loading={loading === "leave"}
+              loading={isPending && pendingAction === "leave"}
               onClick={handleLeave}
             >
               Sair
             </CampusButton>
           )}
 
-          {!memberOf && (
+          {!optimisticMember && !isAuthor && (
             <CampusButton
               variant={isFull ? "ghost" : "primary"}
               size="sm"
-              loading={loading === "join"}
-              disabled={isFull}
+              loading={isPending && pendingAction === "join"}
+              disabled={isFull || (isPending && pendingAction === "join")}
               onClick={handleJoin}
             >
               {isFull ? "Lotado" : "Entrar"}

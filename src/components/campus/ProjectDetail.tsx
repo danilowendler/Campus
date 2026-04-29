@@ -1,36 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { GlassCard } from "./GlassCard";
 import { Badge } from "./Badge";
 import { SkillTag } from "./SkillTag";
 import { Avatar } from "./Avatar";
 import { CampusButton } from "./CampusButton";
-import { useProjects } from "@/lib/projects-context";
-import type { Project } from "@/lib/mock-data";
+import { joinProject, leaveProject } from "@/lib/actions/projects";
+import type { ProjectWithMembers } from "@/lib/supabase/types";
 
 interface ProjectDetailProps {
-  project: Project;
+  project: ProjectWithMembers;
+  currentUserId: string;
+  isMember: boolean;
   onClose: () => void;
 }
 
-export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
-  const { joinProject, leaveProject, isMember, isAuthor } = useProjects();
-  const [loading, setLoading] = useState<"join" | "leave" | null>(null);
+export function ProjectDetail({ project, currentUserId, isMember, onClose }: ProjectDetailProps) {
+  const [isPending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<"join" | "leave" | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  const memberOf = isMember(project.id);
-  const authorOf = isAuthor(project.id);
-  const isFull = project.status === "full" || project.members.length >= project.slots;
-  const emptySlots = Math.max(0, project.slots - project.members.length);
+  const isAuthor = project.author_id === currentUserId;
+  const members = Array.isArray(project.members)
+    ? (project.members as { name: string; course: string }[])
+    : [];
+  const isFull = project.status === "full" || project.member_count >= project.slots;
+  const emptySlots = Math.max(0, project.slots - project.member_count);
 
   useEffect(() => {
     setMounted(true);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return () => { document.body.style.overflow = prev; };
   }, []);
 
   useEffect(() => {
@@ -41,18 +43,22 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  async function handleJoin() {
-    setLoading("join");
-    await new Promise((r) => setTimeout(r, 700));
-    joinProject(project.id);
-    setLoading(null);
+  function handleJoin() {
+    setPendingAction("join");
+    startTransition(async () => {
+      await joinProject(project.id);
+      setPendingAction(null);
+      onClose();
+    });
   }
 
-  async function handleLeave() {
-    setLoading("leave");
-    await new Promise((r) => setTimeout(r, 700));
-    leaveProject(project.id);
-    setLoading(null);
+  function handleLeave() {
+    setPendingAction("leave");
+    startTransition(async () => {
+      await leaveProject(project.id);
+      setPendingAction(null);
+      onClose();
+    });
   }
 
   return (
@@ -188,11 +194,11 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
                 Time
               </h3>
               <span className="text-xs font-medium" style={{ color: "var(--text-faint)" }}>
-                <span style={{ color: "var(--text-muted)" }}>{project.members.length}</span>/{project.slots} membros
+                <span style={{ color: "var(--text-muted)" }}>{project.member_count}</span>/{project.slots} membros
               </span>
             </div>
             <div className="flex flex-col gap-2">
-              {project.members.map((member, i) => (
+              {members.map((member, i) => (
                 <div
                   key={`${member.name}-${i}`}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5"
@@ -207,15 +213,8 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
                       {member.course}
                     </p>
                   </div>
-                  {i === 0 && project.authorId && (
-                    <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full"
-                      style={{ background: "rgba(237,21,90,.12)", color: "#FF7A9C", border: "1px solid rgba(237,21,90,.2)" }}>
-                      Criador
-                    </span>
-                  )}
                 </div>
               ))}
-              {/* Empty slots */}
               {Array.from({ length: emptySlots }).map((_, i) => (
                 <div
                   key={`empty-${i}`}
@@ -241,12 +240,12 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
           </section>
 
           {/* Actions */}
-          {!authorOf && (
+          {!isAuthor && (
             <div className="flex justify-end pt-2 border-t" style={{ borderColor: "var(--border)" }}>
-              {memberOf ? (
+              {isMember ? (
                 <CampusButton
                   variant="secondary"
-                  loading={loading === "leave"}
+                  loading={isPending && pendingAction === "leave"}
                   onClick={handleLeave}
                 >
                   Sair do projeto
@@ -254,7 +253,7 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
               ) : (
                 <CampusButton
                   variant="primary"
-                  loading={loading === "join"}
+                  loading={isPending && pendingAction === "join"}
                   disabled={isFull}
                   onClick={handleJoin}
                 >
