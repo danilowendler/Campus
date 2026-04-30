@@ -188,21 +188,26 @@
 
 ## Milestone 7 — Polimento & Responsividade
 
-**Branch:** `feat/polish`  
+**Branch:** `feat/polish` → **PR #9 mergeado em `main`**  
 **Objetivo:** Garantir que a interface seja pixel-perfect em mobile e que as animações estejam corretas.
 
 ### Entregas
 
-- [ ] Breakpoints mobile: `max-width: 860px` (bento vira 1 coluna) e `600px` (padding reduzido)
-- [ ] `prefers-reduced-motion` — desativar animações de blobs, tilt e marquee se necessário
-- [ ] Loading skeletons nos cards enquanto dados carregam (Suspense boundaries)
-- [ ] Error boundaries para falhas de fetch
-- [ ] Metadados SEO em `app/layout.tsx` (`title`, `description`, `og:image`)
-- [ ] Favicon usando o `LogoMark` exportado como SVG
-- [ ] Revisão de acessibilidade: `aria-label` em botões de ícone, foco visível, contraste
-- [ ] Testar fluxo completo: landing → login → projects → detalhe → entrar → perfil → sair
+- [x] Breakpoints mobile: `max-width: 860px` (bento vira 1 coluna) e `600px` (hero CTAs empilhados)
+- [x] `prefers-reduced-motion` — blobs (`.mesh-blob`), marquee (`.marquee-track`) e `TiltCard` (JS + CSS) desativados
+- [x] Loading skeletons nos cards enquanto dados carregam — `Skeletons.tsx` + `loading.tsx` em `/projects` e `/profile`
+- [x] Error boundaries para falhas de fetch — `error.tsx` com UI amigável e botão retry em `/projects` e `/profile`
+- [x] Metadados SEO em `app/layout.tsx` — `metadataBase`, `title` template, Open Graph completo, Twitter card, `robots`; metadados específicos por rota em `/projects` e `/profile`
+- [x] Favicon usando `LogoMark` exportado como `app/icon.svg`
+- [x] Acessibilidade: `useFocusTrap` hook; `role="dialog"` + `aria-modal` + `aria-labelledby` nos 3 modais; `GlassCard` com `forwardRef`; `:focus-visible` global com `--accent`
+- [x] Navbar: menus mobile com drawer animado (hamburguer + overlay + Escape) no `Nav` e `AppNav`
+- [x] Login movido para grupo `(auth)` raiz com navbar minimalista (só logo, sem distrações)
+- [x] Navbar: logo 34px, `Campus` weight 700, badge `FIAP` accent; duplicação de "Como funciona" removida; CTA "Entrar" tamanho normal com ícone após texto
+- [x] Links centrais do navbar com scroll suave — `ScrollLink` para `#projetos` e `#como-funciona`; `FeaturedProjectsSection` recebeu `id="projetos"` + `scrollMarginTop`
+- [x] Hero: botão "Ver projetos" removido; "Entrar na plataforma" centralizado e solo
 
-**Commit final:** `feat: mobile responsiveness, a11y pass, loading states, seo metadata`
+**Commits:**
+- `feat: polish -- responsividade, a11y, skeletons, SEO e refinamentos de UI`
 
 ---
 
@@ -213,15 +218,15 @@
 
 ### Entregas
 
-- [ ] Conectar repositório GitHub à Vercel
-- [ ] Configurar variáveis de ambiente de produção no painel Vercel:
+- [x] Conectar repositório GitHub à Vercel
+- [x] Configurar variáveis de ambiente de produção no painel Vercel:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - [ ] Configurar domínio personalizado (opcional)
-- [ ] Rodar `npm run build` localmente sem erros antes do merge
-- [ ] Verificar deploy de preview no PR antes de promover para produção
-- [ ] Testar fluxo completo em produção com e-mail `@fiap.com.br` real
-- [ ] Documentar URL de produção no `README.md`
+- [x] Rodar `npm run build` localmente sem erros antes do merge
+- [x] Verificar deploy de preview no PR antes de promover para produção
+- [x] Testar fluxo completo em produção com e-mail `@fiap.com.br` real
+- [x] Documentar URL de produção no `README.md`
 
 **Commit final:** `chore: production deploy — vercel config, env vars, readme with live url`
 
