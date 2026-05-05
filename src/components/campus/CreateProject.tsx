@@ -6,6 +6,7 @@ import { SkillInput } from "./SkillInput";
 import { CampusButton } from "./CampusButton";
 import { createProject } from "@/lib/actions/projects";
 import { useFocusTrap } from "@/lib/useFocusTrap";
+import type { ProjectCategory } from "@/lib/supabase/types";
 
 interface CreateProjectProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ interface FormState {
   reward: string;
   skills: string[];
   slots: number;
+  category: ProjectCategory;
 }
 
 const EMPTY_FORM: FormState = {
@@ -30,12 +32,26 @@ const EMPTY_FORM: FormState = {
   reward: "",
   skills: [],
   slots: 4,
+  category: "open",
+};
+
+const CATEGORY_OPTIONS: { value: ProjectCategory; label: string; hint: string }[] = [
+  { value: "partner", label: "Empresa Parceira", hint: "Desafio publicado por uma empresa parceira da FIAP" },
+  { value: "academic", label: "Acadêmico / FIAP", hint: "Iniciativa acadêmica vinculada a um curso ou disciplina" },
+  { value: "open", label: "Em aberto", hint: "Projeto livre proposto por estudantes" },
+];
+
+const COMPANY_LABEL: Record<ProjectCategory, string> = {
+  partner: "Empresa parceira",
+  academic: "Instituição / Disciplina",
+  open: "Organização ou autor",
 };
 
 export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const TITLE_ID = "create-project-title";
@@ -77,18 +93,24 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+    setSubmitError(null);
     startTransition(async () => {
-      await createProject({
-        title: form.title.trim(),
-        company: form.company.trim(),
-        description: form.description.trim(),
-        scope: form.scope.trim() || "A ser definido com o time.",
-        reward: form.reward.trim() || "A combinar.",
-        skills: form.skills,
-        slots: form.slots,
-      });
-      onCreated?.();
-      onClose();
+      try {
+        await createProject({
+          title: form.title.trim(),
+          company: form.company.trim(),
+          description: form.description.trim(),
+          scope: form.scope.trim() || "A ser definido com o time.",
+          reward: form.reward.trim() || "A combinar.",
+          skills: form.skills,
+          slots: form.slots,
+          category: form.category,
+        });
+        onCreated?.();
+        onClose();
+      } catch (err) {
+        setSubmitError(err instanceof Error ? err.message : "Erro ao criar projeto. Tente novamente.");
+      }
     });
   }
 
@@ -190,18 +212,54 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
                   onBlur={blurStyle}
                 />
               </Field>
-              <Field label="Empresa parceira" error={errors.company} required>
+              <Field label={COMPANY_LABEL[form.category]} error={errors.company} required>
                 <input
                   type="text"
                   value={form.company}
                   onChange={(e) => set("company", e.target.value)}
-                  placeholder="Ex: Ford, Itaú, Raízen…"
+                  placeholder={
+                    form.category === "partner"
+                      ? "Ex: Ford, Itaú, Raízen…"
+                      : form.category === "academic"
+                      ? "Ex: FIAP — Engenharia de Software"
+                      : "Ex: Grupo de Estudos React"
+                  }
                   style={inputBase}
                   onFocus={focusStyle}
                   onBlur={blurStyle}
                 />
               </Field>
             </div>
+
+            {/* Category */}
+            <Field
+              label="Categoria"
+              hint={CATEGORY_OPTIONS.find((o) => o.value === form.category)?.hint}
+              required
+            >
+              <select
+                value={form.category}
+                onChange={(e) => set("category", e.target.value as ProjectCategory)}
+                style={{
+                  ...inputBase,
+                  appearance: "none",
+                  backgroundImage:
+                    "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>\")",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 14px center",
+                  paddingRight: 38,
+                  cursor: "pointer",
+                }}
+                onFocus={focusStyle}
+                onBlur={blurStyle}
+              >
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value} style={{ background: "var(--bg-elevated)", color: "var(--text)" }}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
             {/* Description */}
             <Field label="Descrição" error={errors.description} required>
@@ -277,6 +335,13 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
                 </span>
               </div>
             </Field>
+
+            {/* Submit error */}
+            {submitError && (
+              <p className="text-xs px-1" style={{ color: "#ff5577" }}>
+                {submitError}
+              </p>
+            )}
 
             {/* Submit */}
             <div className="flex items-center justify-end gap-3 pt-2 border-t" style={{ borderColor: "var(--border)" }}>

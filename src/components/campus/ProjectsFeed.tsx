@@ -1,22 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ProjectCard } from "@/components/campus/ProjectCard";
 import { ProjectDetail } from "@/components/campus/ProjectDetail";
 import { CreateProject } from "@/components/campus/CreateProject";
 import { CampusButton } from "@/components/campus/CampusButton";
-import type { ProjectWithMembers } from "@/lib/supabase/types";
+import type { ProjectCategory, ProjectWithMembers } from "@/lib/supabase/types";
 
 type Tab = "all" | "mine";
 
 interface ProjectsFeedProps {
-  initialProjects: ProjectWithMembers[];
+  partnerProjects: ProjectWithMembers[];
+  academicProjects: ProjectWithMembers[];
+  openProjects: ProjectWithMembers[];
+  // Todos os projetos do usuário (membro ou autor), sem filtro de vagas/status.
+  // Usado na aba "Meus projetos" para incluir projetos lotados que saem da view open.
+  myProjects: ProjectWithMembers[];
   currentUserId: string;
   memberProjectIds: string[];
 }
 
+interface SectionMeta {
+  id: ProjectCategory;
+  title: string;
+  subtitle: string;
+  emphasis: "primary" | "secondary" | "tertiary";
+  emptyText: string;
+}
+
+const SECTIONS: SectionMeta[] = [
+  {
+    id: "partner",
+    title: "Empresas Parceiras",
+    subtitle: "Desafios reais publicados por empresas parceiras da FIAP",
+    emphasis: "primary",
+    emptyText: "Nenhum desafio de empresa parceira ativo no momento.",
+  },
+  {
+    id: "academic",
+    title: "Acadêmicos · FIAP",
+    subtitle: "Iniciativas vinculadas a cursos e disciplinas da FIAP",
+    emphasis: "secondary",
+    emptyText: "Nenhum projeto acadêmico publicado por enquanto.",
+  },
+  {
+    id: "open",
+    title: "Em Aberto",
+    subtitle: "Projetos livres com vagas disponíveis para entrar agora",
+    emphasis: "tertiary",
+    emptyText: "Nenhuma vaga aberta agora — volte em breve ou crie a sua.",
+  },
+];
+
 export function ProjectsFeed({
-  initialProjects,
+  partnerProjects,
+  academicProjects,
+  openProjects,
+  myProjects,
   currentUserId,
   memberProjectIds,
 }: ProjectsFeedProps) {
@@ -24,19 +64,39 @@ export function ProjectsFeed({
   const [selectedProject, setSelectedProject] = useState<ProjectWithMembers | null>(null);
   const [showCreate, setShowCreate] = useState(false);
 
-  const memberSet = new Set(memberProjectIds);
+  const memberSet = useMemo(() => new Set(memberProjectIds), [memberProjectIds]);
 
-  const filtered =
+  // totalActive: projetos com status 'active' e vagas disponíveis (excluindo lotados).
+  // Conta apenas o que realmente está disponível para novos membros.
+  const totalActive = useMemo(() => {
+    const allFeed = [...partnerProjects, ...academicProjects, ...openProjects];
+    return allFeed.filter((p) => p.status === "active" && p.member_count < p.slots).length;
+  }, [partnerProjects, academicProjects, openProjects]);
+
+  // "Meus projetos" usa myProjects (sem filtro de vagas) agrupado por categoria.
+  // Isso evita que projetos lotados (ex: open full) desapareçam da aba do usuário.
+  const mineByCategory: Record<ProjectCategory, ProjectWithMembers[]> = useMemo(
+    () => ({
+      partner: myProjects.filter((p) => p.category === "partner"),
+      academic: myProjects.filter((p) => p.category === "academic"),
+      open: myProjects.filter((p) => p.category === "open"),
+    }),
+    [myProjects]
+  );
+
+  const sectionData: Record<ProjectCategory, ProjectWithMembers[]> =
     tab === "all"
-      ? initialProjects
-      : initialProjects.filter(
-          (p) => memberSet.has(p.id) || p.author_id === currentUserId
-        );
+      ? {
+          partner: partnerProjects,
+          academic: academicProjects,
+          open: openProjects,
+        }
+      : mineByCategory;
 
-  const activeCount = initialProjects.filter((p) => p.status === "active").length;
-  const mineCount = initialProjects.filter(
-    (p) => memberSet.has(p.id) || p.author_id === currentUserId
-  ).length;
+  const visibleCount =
+    tab === "all"
+      ? partnerProjects.length + academicProjects.length + openProjects.length
+      : myProjects.length;
 
   return (
     <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-10 sm:px-6">
@@ -51,7 +111,7 @@ export function ProjectsFeed({
               Projetos
             </h1>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-              <span style={{ color: "var(--text)" }}>{activeCount}</span> projetos ativos
+              <span style={{ color: "var(--text)" }}>{totalActive}</span> projetos ativos
               aguardando o seu time
             </p>
           </div>
@@ -101,7 +161,7 @@ export function ProjectsFeed({
                       : { background: "rgba(255,255,255,.08)", color: "var(--text-faint)" }
                   }
                 >
-                  {mineCount}
+                  {myProjects.length}
                 </span>
               )}
             </button>
@@ -109,27 +169,32 @@ export function ProjectsFeed({
         </div>
       </div>
 
-      {/* Grid or empty state */}
-      {filtered.length === 0 ? (
-        <EmptyState tab={tab} onCreateClick={() => setShowCreate(true)} />
+      {/* Empty global */}
+      {visibleCount === 0 ? (
+        <GlobalEmptyState tab={tab} onCreateClick={() => setShowCreate(true)} />
       ) : (
-        <div
-          className="grid gap-4"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))",
-            animation: "fadeUp .5s cubic-bezier(.22,1,.36,1) both",
-            animationDelay: ".1s",
-          }}
-        >
-          {filtered.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              currentUserId={currentUserId}
-              isMember={memberSet.has(project.id)}
-              onViewDetail={setSelectedProject}
-            />
-          ))}
+        <div className="flex flex-col gap-12">
+          {(() => {
+            // Em "Meus projetos", filtra seções vazias antes de renderizar.
+            // Se nenhuma seção tiver items após o filtro (edge case: projetos do usuário
+            // foram removidos da lista entre carregamentos), mostra GlobalEmptyState.
+            const visibleSections = SECTIONS.filter(
+              (s) => !(tab === "mine" && sectionData[s.id].length === 0)
+            );
+            if (visibleSections.length === 0) {
+              return <GlobalEmptyState tab={tab} onCreateClick={() => setShowCreate(true)} />;
+            }
+            return visibleSections.map((section) => (
+              <Section
+                key={section.id}
+                meta={section}
+                items={sectionData[section.id]}
+                currentUserId={currentUserId}
+                memberSet={memberSet}
+                onViewDetail={setSelectedProject}
+              />
+            ));
+          })()}
         </div>
       )}
 
@@ -152,7 +217,118 @@ export function ProjectsFeed({
   );
 }
 
-function EmptyState({ tab, onCreateClick }: { tab: Tab; onCreateClick: () => void }) {
+function Section({
+  meta,
+  items,
+  currentUserId,
+  memberSet,
+  onViewDetail,
+}: {
+  meta: SectionMeta;
+  items: ProjectWithMembers[];
+  currentUserId: string;
+  memberSet: Set<string>;
+  onViewDetail: (project: ProjectWithMembers) => void;
+}) {
+  const isPrimary = meta.emphasis === "primary";
+
+  return (
+    <section
+      style={
+        isPrimary
+          ? {
+              padding: "24px 24px 28px",
+              borderRadius: "var(--radius-lg)",
+              border: "1px solid rgba(237,21,90,.18)",
+              background:
+                "linear-gradient(180deg, rgba(237,21,90,.06) 0%, rgba(237,21,90,0) 60%)",
+            }
+          : undefined
+      }
+    >
+      <header className="flex items-end justify-between gap-4 mb-5 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2
+            className="font-semibold tracking-tight"
+            style={{
+              color: "var(--text)",
+              fontSize: isPrimary ? 22 : 18,
+              letterSpacing: isPrimary ? "-0.01em" : undefined,
+            }}
+          >
+            {meta.title}
+          </h2>
+          <span
+            className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+            style={{
+              background: isPrimary
+                ? "linear-gradient(135deg, rgba(255,46,99,.22), rgba(176,14,68,.18))"
+                : "rgba(255,255,255,.06)",
+              color: isPrimary ? "#fff" : "var(--text-muted)",
+              border: isPrimary
+                ? "1px solid rgba(237,21,90,.4)"
+                : "1px solid var(--border)",
+            }}
+          >
+            {items.length}
+          </span>
+        </div>
+        <p
+          className="text-xs sm:text-sm m-0"
+          style={{ color: "var(--text-muted)" }}
+        >
+          {meta.subtitle}
+        </p>
+      </header>
+
+      {items.length === 0 ? (
+        <SectionEmpty text={meta.emptyText} />
+      ) : (
+        <div
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))",
+            animation: "fadeUp .5s cubic-bezier(.22,1,.36,1) both",
+            animationDelay: ".1s",
+          }}
+        >
+          {items.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              currentUserId={currentUserId}
+              isMember={memberSet.has(project.id)}
+              onViewDetail={onViewDetail}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SectionEmpty({ text }: { text: string }) {
+  return (
+    <div
+      className="rounded-xl px-5 py-8 text-center text-sm"
+      style={{
+        border: "1px dashed var(--border-strong)",
+        background: "rgba(255,255,255,.02)",
+        color: "var(--text-muted)",
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+function GlobalEmptyState({
+  tab,
+  onCreateClick,
+}: {
+  tab: Tab;
+  onCreateClick: () => void;
+}) {
   return (
     <div
       className="flex flex-col items-center justify-center text-center py-24 gap-5"

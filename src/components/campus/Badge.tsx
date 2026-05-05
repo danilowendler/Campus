@@ -1,6 +1,13 @@
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "live" | "magenta" | "full" | "default";
+type BadgeVariant =
+  | "live"
+  | "magenta"
+  | "full"
+  | "default"
+  | "partner"
+  | "academic"
+  | "open";
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -28,6 +35,23 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
     background: "rgba(255,255,255,.05)",
     color: "var(--text-muted)",
     border: "1px solid var(--border)",
+  },
+  // Categorias do feed (Milestone 9)
+  partner: {
+    background: "linear-gradient(135deg, rgba(255,46,99,.22), rgba(176,14,68,.18))",
+    color: "#fff",
+    border: "1px solid rgba(237,21,90,.5)",
+    boxShadow: "0 0 0 1px rgba(237,21,90,.15) inset, 0 4px 14px -6px rgba(237,21,90,.55)",
+  },
+  academic: {
+    background: "rgba(139,92,246,.14)",
+    color: "#c4b5fd",
+    border: "1px solid rgba(139,92,246,.32)",
+  },
+  open: {
+    background: "rgba(255,255,255,.04)",
+    color: "var(--text-muted)",
+    border: "1px solid var(--border-strong)",
   },
 };
 

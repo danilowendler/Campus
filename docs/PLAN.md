@@ -232,6 +232,100 @@
 
 ---
 
+# Fase 2 — Evolução pós-MVP
+
+> **Status:** Fase 1 (MVP) concluída e em produção. Os milestones abaixo refletem
+> as novas prioridades acordadas com os sócios após a entrega inicial.
+> Cada milestone segue a mesma cadência: branch dedicada, PR com preview na Vercel,
+> merge em `main` após validação.
+
+---
+
+## Milestone 9 — Categorização do Feed de Projetos
+
+**Branch:** `feat/projects-categories` → **PR mergeado em `main`**
+**Objetivo:** Reformular `/projects` para expor três níveis hierárquicos de projetos.
+
+### Entregas
+
+- [x] Migration SQL: adicionar coluna `category` em `projects` com `CHECK (category IN ('partner','academic','open'))`, default `'open'`; backfill de projetos existentes.
+- [x] Atualizar tipos TS (`lib/types.ts` ou equivalente) e a view `projects_with_members` para incluir `category`.
+- [x] `CreateProject.tsx`: novo campo select de categoria (Empresa Parceira / Acadêmico / Aberto).
+- [x] `app/(app)/projects/page.tsx`: reorganizar feed em **3 seções hierárquicas**:
+  - **Nível 1 — Empresas Parceiras** (destaque visual reforçado, ordem prioritária).
+  - **Nível 2 — Acadêmicos / FIAP** (seção secundária).
+  - **Nível 3 — Em aberto** (filtrado server-side: somente projetos `status = 'active'` **e** com vagas ativas — `member_count < slots` — via view `open_projects_with_vacancies`).
+- [x] `ProjectCard.tsx`: novo `Badge` de categoria (variantes visuais distintas para cada nível).
+- [x] Estado vazio por seção (reaproveitar `EmptyState`) com mensagens contextuais.
+- [x] Atualizar tabs "Todos" / "Meus projetos" para preservar a categorização dentro de "Todos".
+- [x] RLS revisão: garantir que `category` é somente-leitura para não-autores.
+
+**Commit final:** `feat: project categories — partner, academic and open tiers with hierarchical feed`
+
+---
+
+## Milestone 10 — Match de Skills (Sidebar de Filtros)
+
+**Branch:** `feat/skills-match-sidebar`
+**Objetivo:** Permitir que estudantes descubram projetos e pessoas com skills compatíveis através de uma Sidebar de filtros.
+
+> ⚠️ **Regra de alinhamento obrigatória:** antes de iniciar a codificação do **layout** da Sidebar, o agente deve pausar e solicitar ao usuário aprovação explícita do desenho proposto (estrutura de colunas, breakpoints mobile, comportamento sticky, agrupamento de filtros). Esta regra também está duplicada em `CLAUDE.md` (seção *Coding Conventions*).
+
+### Entregas
+
+- [ ] **[Pré-codificação]** Submeter mockup textual da Sidebar e aguardar aprovação do usuário.
+- [ ] `components/campus/ProjectsSidebar.tsx` — Sidebar fixa em desktop, drawer em mobile.
+- [ ] Filtros suportados:
+  - Skills (multi-select com chips, mesmo visual de `SkillTag`).
+  - Categoria (Parceira / Acadêmico / Aberto).
+  - "Apenas com vagas abertas" (toggle).
+  - "Match com meu perfil" (toggle — usa skills do `profile-context`).
+- [ ] Score de match: cálculo client-side ou server-side de overlap de skills entre projeto e usuário; `ProjectCard` ganha indicador "X% match".
+- [ ] Ordenação por relevância de match quando o toggle estiver ativo.
+- [ ] URL state: filtros refletidos em querystring (`?skills=react,figma&category=partner`) para deep-linking.
+- [ ] Persistência leve: lembrar últimos filtros em `localStorage`.
+- [ ] Acessibilidade: focus trap no drawer mobile, `aria-expanded`, atalho `/` para focar busca.
+- [ ] Skeleton loading para a sidebar.
+
+**Commits sugeridos:**
+- `feat: skills sidebar layout (aprovado pelo usuário)`
+- `feat: skills sidebar filters and url state`
+- `feat: profile match score on project cards`
+
+---
+
+## Milestone 11 — Smart Profile (Upload de Currículo + Auto-fill)
+
+**Branch:** `feat/smart-profile-cv`
+**Objetivo:** Permitir que o estudante envie um currículo em PDF e use IA/parser para preencher automaticamente bio e skills do perfil.
+
+### Entregas
+
+- [ ] Supabase Storage: novo bucket privado `resumes/` com policy "owner-only".
+- [ ] Migration: tabela `resumes (id, user_id, file_path, parsed_at, parsed_payload jsonb)`.
+- [ ] `ProfileEdit.tsx`: novo botão "Anexar currículo (PDF)" com dropzone.
+  - Validação: somente `application/pdf`, tamanho máximo (ex.: 5 MB).
+  - Indicador de upload + estado pós-upload com nome do arquivo.
+- [ ] Server Action `uploadResume`: salva no Storage, cria linha em `resumes`.
+- [ ] Server Action `parseResume`:
+  - Extrai texto do PDF (ex.: `pdf-parse` ou `unpdf` — avaliar na implementação; preferir lib pure-JS sem nativos).
+  - Pipeline de extração: **decidir na implementação** entre (a) heurística regex + dicionário de skills, ou (b) chamada a LLM (ex.: Claude via SDK) com schema estruturado.
+  - Persiste `parsed_payload` em `resumes`.
+- [ ] Após parse, exibir CTA **"Preencher perfil automaticamente"** que abre um diff visual: campos atuais vs. extraídos, com checkboxes por campo.
+- [ ] Confirmação aplica os campos selecionados via `updateProfile`.
+- [ ] Foco inicial: **bio** e **skills**. Curso e nome ficam como sugestões (nunca sobrescrevem sem confirmação).
+- [ ] Toast de sucesso e fallback gracioso se parse falhar.
+- [ ] Telemetria mínima: log do tempo de parse e taxa de aceitação dos campos sugeridos.
+
+**Decisão pendente (a confirmar antes da implementação):** estratégia de parse (heurística vs LLM) — apresentar trade-offs ao usuário no início da branch.
+
+**Commits sugeridos:**
+- `feat: resume upload — storage bucket, profile dropzone`
+- `feat: resume parsing pipeline and parsed payload table`
+- `feat: profile auto-fill flow with field-level diff and confirmation`
+
+---
+
 ## Resumo dos Milestones
 
 | # | Branch | Entrega principal | UI? | Backend? |
@@ -245,6 +339,9 @@
 | 6 | `feat/supabase-integration` | Auth + DB real | — | ✓ |
 | 7 | `feat/polish` | Responsividade + a11y | ✓ | — |
 | 8 | `feat/deploy` | Deploy em produção | — | ✓ |
+| 9 | `feat/projects-categories` | Categorias do feed (parceira/acadêmico/aberto) | ✓ | ✓ |
+| 10 | `feat/skills-match-sidebar` | Sidebar de filtros + match score | ✓ | — |
+| 11 | `feat/smart-profile-cv` | Upload de currículo + auto-fill | ✓ | ✓ |
 
 > **Referência visual permanente:** `project/Campus Landing.html`  
 > Consultar este arquivo sempre que houver dúvida sobre espaçamentos, cores exatas ou comportamentos de interação.
