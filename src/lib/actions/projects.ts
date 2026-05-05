@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import type { ProjectCategory } from "@/lib/supabase/types";
+
+const VALID_CATEGORIES: readonly ProjectCategory[] = ["partner", "academic", "open"];
 
 export async function createProject(formData: {
   title: string;
@@ -11,10 +14,15 @@ export async function createProject(formData: {
   reward: string;
   skills: string[];
   slots: number;
+  category: ProjectCategory;
 }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado");
+
+  if (!VALID_CATEGORIES.includes(formData.category)) {
+    throw new Error("Categoria inválida");
+  }
 
   const { error } = await supabase.from("projects").insert({
     ...formData,
@@ -31,19 +39,17 @@ export async function joinProject(projectId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado");
 
-  // Upsert atômico — sem race condition
+  // Insert direto sem .select().single() — evita erro PGRST116 mascarando 23505
   const { error: memberError } = await supabase
     .from("memberships")
-    .insert({ user_id: user.id, project_id: projectId })
-    .select()
-    .single();
+    .insert({ user_id: user.id, project_id: projectId });
 
   if (memberError && memberError.code !== "23505") {
-    // 23505 = unique_violation (já é membro)
+    // 23505 = unique_violation (já é membro) — ignorar
     throw new Error(memberError.message);
   }
 
-  // Atualiza status para "full" se vagas esgotadas
+  // Sincroniza status para "full" se vagas esgotadas
   await supabase.rpc("sync_project_status", { p_project_id: projectId });
 
   revalidatePath("/projects");
@@ -54,6 +60,10 @@ export async function leaveProject(projectId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado");
 
+  // RPC ANTES do delete: sync_project_status verifica se o chamador é membro ou autor.
+  // Após o delete, o usuário não seria mais membro e a verificação falharia com 42501.
+  await supabase.rpc("sync_project_status", { p_project_id: projectId });
+
   const { error } = await supabase
     .from("memberships")
     .delete()
@@ -61,8 +71,6 @@ export async function leaveProject(projectId: string) {
     .eq("project_id", projectId);
 
   if (error) throw new Error(error.message);
-
-  await supabase.rpc("sync_project_status", { p_project_id: projectId });
 
   revalidatePath("/projects");
 }

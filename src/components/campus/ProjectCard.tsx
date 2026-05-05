@@ -7,7 +7,13 @@ import { SkillTag } from "./SkillTag";
 import { TeamSlots } from "./TeamSlots";
 import { CampusButton } from "./CampusButton";
 import { joinProject, leaveProject, deleteProject } from "@/lib/actions/projects";
-import type { ProjectWithMembers } from "@/lib/supabase/types";
+import type { ProjectCategory, ProjectWithMembers } from "@/lib/supabase/types";
+
+const CATEGORY_BADGE: Record<ProjectCategory, { variant: "partner" | "academic" | "open"; label: string }> = {
+  partner: { variant: "partner", label: "Parceira" },
+  academic: { variant: "academic", label: "Acadêmico" },
+  open: { variant: "open", label: "Aberto" },
+};
 
 interface ProjectCardProps {
   project: ProjectWithMembers;
@@ -26,6 +32,7 @@ export function ProjectCard({ project, currentUserId, isMember: isMemberProp, on
 
   const isAuthor = project.author_id === currentUserId;
   const isFull = project.status === "full" || optimisticCount >= project.slots;
+  const categoryBadge = CATEGORY_BADGE[project.category] ?? CATEGORY_BADGE.open;
 
   const members = Array.isArray(project.members)
     ? (project.members as { name: string; course: string }[])
@@ -106,9 +113,12 @@ export function ProjectCard({ project, currentUserId, isMember: isMemberProp, on
             {project.company}
           </span>
         </div>
-        <Badge variant={isFull ? "full" : "live"} className="flex-shrink-0">
-          {isFull ? "Lotado" : "Ao vivo"}
-        </Badge>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <Badge variant={categoryBadge.variant}>{categoryBadge.label}</Badge>
+          <Badge variant={isFull ? "full" : "live"}>
+            {isFull ? "Lotado" : "Ao vivo"}
+          </Badge>
+        </div>
       </div>
 
       {/* Title */}

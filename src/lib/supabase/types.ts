@@ -1,5 +1,7 @@
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
+export type ProjectCategory = "partner" | "academic" | "open";
+
 export interface Database {
   public: {
     Tables: {
@@ -44,6 +46,7 @@ export interface Database {
           slots: number;
           skills: string[];
           status: "active" | "full" | "closed";
+          category: ProjectCategory;
           author_id: string;
           created_at: string;
           updated_at: string;
@@ -57,6 +60,7 @@ export interface Database {
           slots: number;
           skills?: string[];
           status?: "active" | "full" | "closed";
+          category?: ProjectCategory;
           author_id: string;
         };
         Update: {
@@ -68,6 +72,7 @@ export interface Database {
           slots?: number;
           skills?: string[];
           status?: "active" | "full" | "closed";
+          category?: ProjectCategory;
           updated_at?: string;
         };
       };
@@ -96,10 +101,30 @@ export interface Database {
           slots: number;
           skills: string[];
           status: "active" | "full" | "closed";
+          category: ProjectCategory;
           author_id: string;
           created_at: string;
           member_count: number;
           members: Json;
+        };
+      };
+      open_projects_with_vacancies: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          scope: string;
+          reward: string;
+          company: string;
+          slots: number;
+          skills: string[];
+          status: "active" | "full" | "closed";
+          category: ProjectCategory;
+          author_id: string;
+          created_at: string;
+          member_count: number;
+          members: Json;
+          available_slots: number;
         };
       };
     };
@@ -110,3 +135,4 @@ export type UserRow = Database["public"]["Tables"]["users"]["Row"];
 export type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 export type MembershipRow = Database["public"]["Tables"]["memberships"]["Row"];
 export type ProjectWithMembers = Database["public"]["Views"]["projects_with_members"]["Row"];
+export type OpenProjectWithVacancies = Database["public"]["Views"]["open_projects_with_vacancies"]["Row"];
