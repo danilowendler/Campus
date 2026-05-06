@@ -50,8 +50,8 @@ export function SkillInput({
       }}
       onClick={() => inputRef.current?.focus()}
       onFocusCapture={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = "rgba(237,21,90,.5)";
-        (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px rgba(237,21,90,.14)";
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px var(--accent-soft)";
       }}
       onBlurCapture={(e) => {
         (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";

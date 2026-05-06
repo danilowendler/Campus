@@ -39,9 +39,9 @@ export function Tabs({ tabs, active, onChange, className }: TabsProps) {
               isActive
                 ? {
                     background:
-                      "linear-gradient(135deg, rgba(255,46,99,.22), rgba(237,21,90,.22))",
+                      "linear-gradient(135deg, rgba(255,46,99,.22), var(--accent-subtle))",
                     color: "#fff",
-                    boxShadow: "inset 0 0 0 1px rgba(237,21,90,.35)",
+                    boxShadow: "inset 0 0 0 1px var(--accent-mid)",
                   }
                 : {
                     background: "transparent",

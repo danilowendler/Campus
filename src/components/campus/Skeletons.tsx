@@ -55,29 +55,62 @@ export function ProjectCardSkeleton() {
   );
 }
 
+export function ProjectsSidebarSkeleton() {
+  return (
+    <div
+      className="hidden lg:flex flex-col w-[280px] rounded-[var(--radius-lg)] overflow-hidden self-start sticky"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid var(--border)",
+        top: 80,
+      }}
+    >
+      <div
+        className="flex items-center justify-between px-4 h-12"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
+        <Bone className="h-3 w-12" />
+      </div>
+      <div className="px-4 py-4 flex flex-col gap-5">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="flex flex-col gap-2">
+            <Bone className="h-2.5 w-16" />
+            <Bone className="h-8 w-full rounded-lg" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ProjectsFeedSkeleton() {
   return (
-    <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-10 sm:px-6">
-      {/* Page header */}
-      <div className="flex flex-col gap-1 mb-8">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <Bone className="h-8 w-36" />
-            <Bone className="h-3 w-48" />
+    <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-10 sm:px-6">
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <ProjectsSidebarSkeleton />
+        <div>
+          {/* Page header */}
+          <div className="flex flex-col gap-1 mb-8">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <Bone className="h-8 w-36" />
+                <Bone className="h-3 w-48" />
+              </div>
+              <Bone className="h-9 w-32 rounded-xl mt-1" />
+            </div>
+            <Bone className="h-9 w-52 rounded-xl mt-6" />
           </div>
-          <Bone className="h-9 w-32 rounded-xl mt-1" />
-        </div>
-        <Bone className="h-9 w-52 rounded-xl mt-6" />
-      </div>
 
-      {/* Grid */}
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))" }}
-      >
-        {Array.from({ length: 6 }).map((_, i) => (
-          <ProjectCardSkeleton key={i} />
-        ))}
+          {/* Grid */}
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))" }}
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );

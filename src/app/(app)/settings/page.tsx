@@ -30,7 +30,7 @@ function Toggle({
           : "rgba(255,255,255,0.1)",
         border: "1px solid",
         borderColor: checked ? "transparent" : "var(--border-strong)",
-        boxShadow: checked ? "0 0 14px -3px rgba(237,21,90,.45)" : "none",
+        boxShadow: checked ? "0 0 14px -3px var(--accent-strong)" : "none",
       }}
     >
       <span
@@ -103,7 +103,7 @@ function PasswordInput({
           fontFamily: "var(--font)",
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = "rgba(237,21,90,.5)";
+          e.currentTarget.style.borderColor = "var(--accent)";
         }}
         onBlur={(e) => {
           e.currentTarget.style.borderColor = error
@@ -276,15 +276,15 @@ export default function SettingsPage() {
                   className="flex flex-col items-center gap-2.5 py-5 rounded-xl transition-all duration-200 cursor-pointer"
                   style={{
                     background: active
-                      ? "rgba(237,21,90,.1)"
+                      ? "var(--accent-light)"
                       : "rgba(255,255,255,.03)",
                     border: "1px solid",
                     borderColor: active
-                      ? "rgba(237,21,90,.35)"
+                      ? "var(--accent-mid)"
                       : "var(--border)",
                     color: active ? "var(--accent)" : "var(--text-muted)",
                     boxShadow: active
-                      ? "0 0 20px -6px rgba(237,21,90,.25)"
+                      ? "0 0 20px -6px var(--accent-subtle)"
                       : "none",
                   }}
                 >

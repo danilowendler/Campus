@@ -98,8 +98,8 @@ export function ProjectDetail({ project, currentUserId, isMember, onClose }: Pro
               <span
                 className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0"
                 style={{
-                  background: "linear-gradient(135deg, rgba(237,21,90,.25), rgba(176,14,68,.2))",
-                  border: "1px solid rgba(237,21,90,.3)",
+                  background: "linear-gradient(135deg, var(--accent-subtle), rgba(176,14,68,.2))",
+                  border: "1px solid var(--accent-mid)",
                   color: "#FF7A9C",
                 }}
               >
@@ -176,8 +176,8 @@ export function ProjectDetail({ project, currentUserId, isMember, onClose }: Pro
           <section
             className="rounded-xl p-4"
             style={{
-              background: "linear-gradient(135deg, rgba(237,21,90,.08), rgba(176,14,68,.06))",
-              border: "1px solid rgba(237,21,90,.2)",
+              background: "linear-gradient(135deg, var(--accent-light), rgba(176,14,68,.06))",
+              border: "1px solid var(--accent-subtle)",
             }}
           >
             <div className="flex items-center gap-2 mb-2">
