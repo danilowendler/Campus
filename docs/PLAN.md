@@ -266,26 +266,26 @@
 
 ## Milestone 10 — Match de Skills (Sidebar de Filtros)
 
-**Branch:** `feat/skills-match-sidebar`
+**Branch:** `feat/skills-match-sidebar` → **PR #12 mergeado em `main`**
 **Objetivo:** Permitir que estudantes descubram projetos e pessoas com skills compatíveis através de uma Sidebar de filtros.
 
 > ⚠️ **Regra de alinhamento obrigatória:** antes de iniciar a codificação do **layout** da Sidebar, o agente deve pausar e solicitar ao usuário aprovação explícita do desenho proposto (estrutura de colunas, breakpoints mobile, comportamento sticky, agrupamento de filtros). Esta regra também está duplicada em `CLAUDE.md` (seção *Coding Conventions*).
 
 ### Entregas
 
-- [ ] **[Pré-codificação]** Submeter mockup textual da Sidebar e aguardar aprovação do usuário.
-- [ ] `components/campus/ProjectsSidebar.tsx` — Sidebar fixa em desktop, drawer em mobile.
-- [ ] Filtros suportados:
+- [x] **[Pré-codificação]** Submeter mockup textual da Sidebar e aguardar aprovação do usuário.
+- [x] `components/campus/ProjectsSidebar.tsx` — Sidebar fixa em desktop, drawer em mobile.
+- [x] Filtros suportados:
   - Skills (multi-select com chips, mesmo visual de `SkillTag`).
   - Categoria (Parceira / Acadêmico / Aberto).
   - "Apenas com vagas abertas" (toggle).
   - "Match com meu perfil" (toggle — usa skills do `profile-context`).
-- [ ] Score de match: cálculo client-side ou server-side de overlap de skills entre projeto e usuário; `ProjectCard` ganha indicador "X% match".
-- [ ] Ordenação por relevância de match quando o toggle estiver ativo.
-- [ ] URL state: filtros refletidos em querystring (`?skills=react,figma&category=partner`) para deep-linking.
-- [ ] Persistência leve: lembrar últimos filtros em `localStorage`.
-- [ ] Acessibilidade: focus trap no drawer mobile, `aria-expanded`, atalho `/` para focar busca.
-- [ ] Skeleton loading para a sidebar.
+- [x] Score de match: cálculo client-side ou server-side de overlap de skills entre projeto e usuário; `ProjectCard` ganha indicador "X% match".
+- [x] Ordenação por relevância de match quando o toggle estiver ativo.
+- [x] URL state: filtros refletidos em querystring (`?skills=react,figma&category=partner`) para deep-linking.
+- [x] Persistência leve: lembrar últimos filtros em `localStorage`.
+- [x] Acessibilidade: focus trap no drawer mobile, `aria-expanded`, atalho `/` para focar busca.
+- [x] Skeleton loading para a sidebar.
 
 **Commits sugeridos:**
 - `feat: skills sidebar layout (aprovado pelo usuário)`
