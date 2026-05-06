@@ -63,8 +63,8 @@ export function Nav({ actions, className }: NavProps) {
             className="text-[10px] font-semibold tracking-[.18em] uppercase px-1.5 py-0.5 rounded-md"
             style={{
               color: "var(--accent)",
-              background: "rgba(237,21,90,.1)",
-              border: "1px solid rgba(237,21,90,.2)",
+              background: "var(--accent-light)",
+              border: "1px solid var(--accent-subtle)",
               letterSpacing: ".18em",
             }}
           >

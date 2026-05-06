@@ -43,11 +43,11 @@ const PROJECTS = [
 const visualStyles: Record<string, React.CSSProperties> = {
   default: {
     background:
-      "radial-gradient(circle, rgba(237,21,90,.42), rgba(176,14,68,.2) 40%, transparent 70%)",
+      "radial-gradient(circle, var(--accent-strong), rgba(176,14,68,.2) 40%, transparent 70%)",
   },
   alt: {
     background:
-      "radial-gradient(circle, rgba(255,46,99,.38), rgba(237,21,90,.18) 40%, transparent 70%)",
+      "radial-gradient(circle, rgba(255,46,99,.38), var(--accent-soft) 40%, transparent 70%)",
   },
   alt2: {
     background:
@@ -90,8 +90,8 @@ export function FeaturedProjectsSection() {
             textTransform: "uppercase",
             padding: "5px 12px",
             borderRadius: 999,
-            background: "rgba(237,21,90,.10)",
-            border: "1px solid rgba(237,21,90,.25)",
+            background: "var(--accent-light)",
+            border: "1px solid var(--accent-subtle)",
           }}
         >
           Ao vivo agora

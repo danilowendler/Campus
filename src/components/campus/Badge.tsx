@@ -22,9 +22,9 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
     border: "1px solid rgba(34,197,94,.3)",
   },
   magenta: {
-    background: "rgba(237,21,90,.14)",
+    background: "var(--accent-soft)",
     color: "#FF7A9C",
-    border: "1px solid rgba(237,21,90,.32)",
+    border: "1px solid var(--accent-mid)",
   },
   full: {
     background: "rgba(255,60,90,.12)",
@@ -41,7 +41,7 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
     background: "linear-gradient(135deg, rgba(255,46,99,.22), rgba(176,14,68,.18))",
     color: "#fff",
     border: "1px solid rgba(237,21,90,.5)",
-    boxShadow: "0 0 0 1px rgba(237,21,90,.15) inset, 0 4px 14px -6px rgba(237,21,90,.55)",
+    boxShadow: "0 0 0 1px var(--accent-soft) inset, 0 4px 14px -6px rgba(237,21,90,.55)",
   },
   academic: {
     background: "rgba(139,92,246,.14)",

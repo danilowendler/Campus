@@ -71,8 +71,8 @@ export function ProfilePageClient({ initialProfile, myProjects, currentUserId }:
             <span
               className="text-xs font-medium px-2 py-0.5 rounded-full tabular-nums"
               style={{
-                background: "rgba(237,21,90,.1)",
-                border: "1px solid rgba(237,21,90,.22)",
+                background: "var(--accent-light)",
+                border: "1px solid var(--accent-subtle)",
                 color: "#FF7A9C",
               }}
             >
@@ -87,7 +87,7 @@ export function ProfilePageClient({ initialProfile, myProjects, currentUserId }:
             >
               <span
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(237,21,90,.1)", border: "1px solid rgba(237,21,90,.2)" }}
+                style={{ background: "var(--accent-light)", border: "1px solid var(--accent-subtle)" }}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ED155A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2l.09-.09a4.5 4.5 0 0 1 6.32 0 4.5 4.5 0 0 0 6.32 0l.09-.09c1.26-1.5 2-5 2-5a4.5 4.5 0 0 0-4.5 4.5" />

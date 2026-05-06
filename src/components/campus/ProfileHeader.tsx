@@ -22,7 +22,7 @@ export function ProfileHeader({ onEdit }: ProfileHeaderProps) {
           className="w-full h-32 rounded-2xl mb-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(237,21,90,.18) 0%, rgba(176,14,68,.12) 50%, rgba(255,46,99,.08) 100%)",
+              "linear-gradient(135deg, var(--accent-soft) 0%, rgba(176,14,68,.12) 50%, rgba(255,46,99,.08) 100%)",
             border: "1px solid var(--border)",
             position: "relative",
             overflow: "hidden",
@@ -32,7 +32,7 @@ export function ProfileHeader({ onEdit }: ProfileHeaderProps) {
           <div
             className="absolute -top-8 -right-8 w-40 h-40 rounded-full"
             style={{
-              background: "radial-gradient(circle, rgba(237,21,90,.22) 0%, transparent 70%)",
+              background: "radial-gradient(circle, var(--accent-subtle) 0%, transparent 70%)",
               filter: "blur(24px)",
             }}
           />
@@ -93,8 +93,8 @@ export function ProfileHeader({ onEdit }: ProfileHeaderProps) {
             <span
               className="text-xs font-medium px-2 py-0.5 rounded-full"
               style={{
-                background: "rgba(237,21,90,.1)",
-                border: "1px solid rgba(237,21,90,.22)",
+                background: "var(--accent-light)",
+                border: "1px solid var(--accent-subtle)",
                 color: "#FF7A9C",
               }}
             >

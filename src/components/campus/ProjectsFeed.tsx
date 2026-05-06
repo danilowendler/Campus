@@ -333,9 +333,9 @@ function Section({
           ? {
               padding: "24px 24px 28px",
               borderRadius: "var(--radius-lg)",
-              border: "1px solid rgba(237,21,90,.18)",
+              border: "1px solid var(--accent-soft)",
               background:
-                "linear-gradient(180deg, rgba(237,21,90,.06) 0%, rgba(237,21,90,0) 60%)",
+                "linear-gradient(180deg, var(--accent-light) 0%, transparent 60%)",
             }
           : undefined
       }
@@ -360,7 +360,7 @@ function Section({
                 : "rgba(255,255,255,.06)",
               color: isPrimary ? "#fff" : "var(--text-muted)",
               border: isPrimary
-                ? "1px solid rgba(237,21,90,.4)"
+                ? "1px solid var(--accent-strong)"
                 : "1px solid var(--border)",
             }}
           >
@@ -434,8 +434,8 @@ function GlobalEmptyState({
       <span
         className="w-16 h-16 rounded-2xl inline-flex items-center justify-center"
         style={{
-          background: "linear-gradient(135deg, rgba(237,21,90,.12), rgba(176,14,68,.08))",
-          border: "1px solid rgba(237,21,90,.2)",
+          background: "linear-gradient(135deg, var(--accent-soft), rgba(176,14,68,.08))",
+          border: "1px solid var(--accent-subtle)",
         }}
       >
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF7A9C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

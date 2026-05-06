@@ -90,10 +90,10 @@ const iconBox: React.CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "linear-gradient(135deg, rgba(255,46,99,.22), rgba(237,21,90,.22))",
-  border: "1px solid rgba(237,21,90,.32)",
+  background: "linear-gradient(135deg, rgba(255,46,99,.22), var(--accent-subtle))",
+  border: "1px solid var(--accent-mid)",
   color: "#FFB3C7",
-  boxShadow: "0 0 24px rgba(237,21,90,.2)",
+  boxShadow: "0 0 24px var(--accent-light)",
   marginBottom: 16,
   flexShrink: 0,
 };
@@ -158,7 +158,7 @@ function BentoCard({ icon, title, sub, num }: BentoCardProps) {
           width: 180,
           height: 180,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(237,21,90,.22), transparent 60%)",
+          background: "radial-gradient(circle, var(--accent-subtle), transparent 60%)",
           filter: "blur(20px)",
           pointerEvents: "none",
         }}
@@ -200,8 +200,8 @@ export function HowItWorksSection() {
             textTransform: "uppercase",
             padding: "5px 12px",
             borderRadius: 999,
-            background: "rgba(237,21,90,.10)",
-            border: "1px solid rgba(237,21,90,.25)",
+            background: "var(--accent-light)",
+            border: "1px solid var(--accent-subtle)",
           }}
         >
           Como funciona

@@ -104,8 +104,8 @@ export function ProjectCard({ project, currentUserId, isMember: isMemberProp, on
           <span
             className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold flex-shrink-0"
             style={{
-              background: "linear-gradient(135deg, rgba(237,21,90,.2), rgba(176,14,68,.15))",
-              border: "1px solid rgba(237,21,90,.25)",
+              background: "linear-gradient(135deg, var(--accent-subtle), rgba(176,14,68,.15))",
+              border: "1px solid var(--accent-subtle)",
               color: "#FF7A9C",
             }}
           >
@@ -122,7 +122,7 @@ export function ProjectCard({ project, currentUserId, isMember: isMemberProp, on
               style={{
                 background: "linear-gradient(135deg, rgba(255,46,99,.2), rgba(176,14,68,.18))",
                 color: "#FFA3BB",
-                border: "1px solid rgba(237,21,90,.35)",
+                border: "1px solid var(--accent-mid)",
               }}
               aria-label={`${Math.round(matchScore * 100)} por cento de compatibilidade com seu perfil`}
             >

@@ -11,10 +11,10 @@ interface SkillTagProps {
 
 const variantStyles: Record<SkillTagVariant, React.CSSProperties> = {
   pink: {
-    background: "linear-gradient(135deg, rgba(237,21,90,.16), rgba(255,46,99,.12))",
+    background: "linear-gradient(135deg, var(--accent-soft), rgba(255,46,99,.12))",
     color: "#FF7A9C",
-    border: "1px solid rgba(237,21,90,.32)",
-    boxShadow: "inset 0 0 12px rgba(237,21,90,.10)",
+    border: "1px solid var(--accent-mid)",
+    boxShadow: "inset 0 0 12px var(--accent-light)",
   },
   violet: {
     background: "rgba(255,255,255,.04)",
@@ -22,9 +22,9 @@ const variantStyles: Record<SkillTagVariant, React.CSSProperties> = {
     border: "1px solid rgba(255,255,255,.14)",
   },
   blue: {
-    background: "rgba(237,21,90,.08)",
+    background: "var(--accent-light)",
     color: "#FFA3BB",
-    border: "1px solid rgba(237,21,90,.22)",
+    border: "1px solid var(--accent-subtle)",
   },
   gray: {
     background: "rgba(255,255,255,.05)",

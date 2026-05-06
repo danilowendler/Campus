@@ -128,8 +128,8 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
   };
 
   function focusStyle(e: React.FocusEvent<HTMLElement>) {
-    (e.currentTarget as HTMLElement).style.borderColor = "rgba(237,21,90,.5)";
-    (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px rgba(237,21,90,.14)";
+    (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+    (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px var(--accent-soft)";
   }
   function blurStyle(e: React.FocusEvent<HTMLElement>) {
     (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
@@ -326,8 +326,8 @@ export function CreateProject({ onClose, onCreated }: CreateProjectProps) {
                 <span
                   className="w-8 h-8 rounded-lg inline-flex items-center justify-center text-sm font-semibold flex-shrink-0"
                   style={{
-                    background: "rgba(237,21,90,.12)",
-                    border: "1px solid rgba(237,21,90,.25)",
+                    background: "var(--accent-soft)",
+                    border: "1px solid var(--accent-subtle)",
                     color: "#FF7A9C",
                   }}
                 >

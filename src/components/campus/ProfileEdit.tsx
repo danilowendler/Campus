@@ -79,8 +79,8 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
 
   function focusInput(el: HTMLElement | null) {
     if (!el) return;
-    el.style.borderColor = "rgba(237,21,90,.5)";
-    el.style.boxShadow = "0 0 0 3px rgba(237,21,90,.14)";
+    el.style.borderColor = "var(--accent)";
+    el.style.boxShadow = "0 0 0 3px var(--accent-soft)";
   }
   function blurInput(el: HTMLElement | null) {
     if (!el) return;

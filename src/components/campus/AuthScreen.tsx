@@ -123,7 +123,7 @@ export function AuthScreen() {
         borderRadius: "var(--radius-xl)",
         backdropFilter: "blur(24px) saturate(150%)",
         boxShadow:
-          "0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 80px -24px rgba(0,0,0,0.7), 0 0 60px -20px rgba(237,21,90,0.12)",
+          "0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 80px -24px rgba(0,0,0,0.7), 0 0 60px -20px var(--accent-soft)",
         padding: "40px 36px",
         width: "100%",
         maxWidth: "400px",
@@ -208,11 +208,11 @@ export function AuthScreen() {
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   background: isActive
-                    ? "linear-gradient(135deg, rgba(255,46,99,.22), rgba(237,21,90,.22))"
+                    ? "linear-gradient(135deg, rgba(255,46,99,.22), var(--accent-subtle))"
                     : "transparent",
                   color: isActive ? "var(--text)" : "var(--text-muted)",
                   boxShadow: isActive
-                    ? "inset 0 0 0 1px rgba(237,21,90,.35)"
+                    ? "inset 0 0 0 1px var(--accent-mid)"
                     : "none",
                 }}
               >
@@ -264,8 +264,8 @@ export function AuthScreen() {
               style={{
                 fontSize: "13px",
                 color: "#ff5577",
-                background: "rgba(237,21,90,.1)",
-                border: "1px solid rgba(237,21,90,.25)",
+                background: "var(--accent-light)",
+                border: "1px solid var(--accent-subtle)",
                 borderRadius: "var(--radius)",
                 padding: "10px 12px",
               }}
@@ -328,13 +328,13 @@ function inputStyle(hasError: boolean): React.CSSProperties {
     padding: "10px 14px",
     fontSize: "14px",
     background: "rgba(255,255,255,0.05)",
-    border: `1px solid ${hasError ? "rgba(237,21,90,.6)" : "var(--border-strong)"}`,
+    border: `1px solid ${hasError ? "var(--accent)" : "var(--border-strong)"}`,
     borderRadius: "var(--radius)",
     color: "var(--text)",
     outline: "none",
     transition: "border-color 0.15s ease, box-shadow 0.15s ease",
     fontFamily: "var(--font)",
-    boxShadow: hasError ? "0 0 0 3px rgba(237,21,90,.12)" : "none",
+    boxShadow: hasError ? "0 0 0 3px var(--accent-soft)" : "none",
   };
 }
 

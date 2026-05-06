@@ -370,7 +370,7 @@ function SidebarBody({
                   className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm text-left transition-colors"
                   style={{
                     color: active ? "var(--text)" : "var(--text-muted)",
-                    background: active ? "rgba(237,21,90,.08)" : "transparent",
+                    background: active ? "var(--accent-light)" : "transparent",
                   }}
                 >
                   <span
