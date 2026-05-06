@@ -160,6 +160,11 @@ body { min-height: 100vh; overflow-x: hidden; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes drawerSlideIn {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -339,4 +344,7 @@ a:focus-visible {
 
   /* gradientShift on hero title */
   em[style*="gradientShift"] { animation: none !important; }
+
+  /* Mobile drawer — appear instantly */
+  [style*="drawerSlideIn"] { animation: none !important; }
 }

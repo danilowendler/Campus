@@ -20,9 +20,11 @@ interface ProjectCardProps {
   currentUserId: string;
   isMember: boolean;
   onViewDetail: (project: ProjectWithMembers) => void;
+  /** 0–1 — exibe badge "X% match" quando > 0 */
+  matchScore?: number;
 }
 
-export function ProjectCard({ project, currentUserId, isMember: isMemberProp, onViewDetail }: ProjectCardProps) {
+export function ProjectCard({ project, currentUserId, isMember: isMemberProp, onViewDetail, matchScore }: ProjectCardProps) {
   const [isPending, startTransition] = useTransition();
   const [pendingAction, setPendingAction] = useState<"join" | "leave" | "delete" | null>(null);
 
@@ -114,6 +116,22 @@ export function ProjectCard({ project, currentUserId, isMember: isMemberProp, on
           </span>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
+          {typeof matchScore === "number" && matchScore > 0 && (
+            <span
+              className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full"
+              style={{
+                background: "linear-gradient(135deg, rgba(255,46,99,.2), rgba(176,14,68,.18))",
+                color: "#FFA3BB",
+                border: "1px solid rgba(237,21,90,.35)",
+              }}
+              aria-label={`${Math.round(matchScore * 100)} por cento de compatibilidade com seu perfil`}
+            >
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              {Math.round(matchScore * 100)}%
+            </span>
+          )}
           <Badge variant={categoryBadge.variant}>{categoryBadge.label}</Badge>
           <Badge variant={isFull ? "full" : "live"}>
             {isFull ? "Lotado" : "Ao vivo"}

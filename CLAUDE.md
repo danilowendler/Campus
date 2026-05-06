@@ -93,6 +93,11 @@ Map the tokens above into `tailwind.config.ts` so they're usable as utilities (`
 - **Server Components by default**; add `"use client"` only when needed (tilt, hover state, toast, form).
 - Supabase RLS is the security boundary — never expose the service-role key to the client.
 - `@fiap.com.br` domain check must happen server-side (Supabase Auth hook or middleware), not only on the client.
+- **⚠️ Sidebar de filtros de skills (Milestone 10):** antes de escrever qualquer
+  código de layout para a `ProjectsSidebar`, o agente DEVE pausar e solicitar
+  permissão e alinhamento explícito ao usuário no prompt — propondo estrutura,
+  breakpoints, comportamento sticky/drawer e agrupamento de filtros. Codificar
+  o layout sem essa aprovação prévia é uma violação direta do briefing.
 
 ---
 
@@ -100,11 +105,17 @@ Map the tokens above into `tailwind.config.ts` so they're usable as utilities (`
 
 ```sql
 users        (id, name, email, course, skills text[], bio, avatar_url)
-projects     (id, title, description, company, slots int, reward text, skills text[], status, author_id)
+projects     (id, title, description, company, slots int, reward text,
+              skills text[], status, author_id,
+              category check (category in ('partner','academic','open')))   -- v2
 memberships  (user_id, project_id, joined_at)
+resumes      (id, user_id, file_path, parsed_at, parsed_payload jsonb)      -- v2
 ```
 
 RLS: users can only read/write their own `users` row; `memberships` rows are user-scoped; `projects` are readable by all authenticated users.
+
+- `resumes` é estritamente owner-only (read/write). Storage bucket `resumes/` segue a mesma regra.
+- `projects.category` é gravável apenas pelo `author_id`.
 
 ---
 
@@ -116,3 +127,10 @@ RLS: users can only read/write their own `users` row; `memberships` rows are use
 4. **Project detail modal** — scope, rewards, team roster
 5. **Student profile** — skills, bio, project history
 6. **Company dashboard** — post challenges *(v2, out of scope for v1)*
+
+### Phase 2 (post-MVP)
+
+7. **Project categories** — partner / academic / open hierarchical feed
+8. **Skills match sidebar** — filters, match score, URL state
+   *(layout requires user approval before coding — see Coding Conventions)*
+9. **Smart Profile** — resume PDF upload, parsing, auto-fill flow
