@@ -114,12 +114,37 @@ export function ProfileHeader({ onEdit }: ProfileHeaderProps) {
             </p>
           )}
 
-          {/* Skills */}
-          {profile.skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
+          {/* Skills + currículo */}
+          {(profile.skills.length > 0 || profile.resume_path) && (
+            <div className="flex flex-wrap items-center gap-1.5 mt-3">
               {profile.skills.map((s) => (
                 <SkillTag key={s} label={s} variant="pink" />
               ))}
+              {profile.resume_path && (
+                <a
+                  href={`/api/resumes/${profile.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Abrir currículo de ${profile.name} em nova aba`}
+                  className="inline-flex items-center gap-1.5 backdrop-blur-md bg-white/5 border border-white/10 text-white hover:border-[rgba(237,21,90,.3)] hover:text-[#ED155A] transition-all duration-300 rounded-full px-3 py-1 text-[12px] font-medium"
+                >
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                  Currículo
+                </a>
+              )}
             </div>
           )}
         </div>

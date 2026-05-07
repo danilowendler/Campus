@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useTransition } from "react";
+import { Field } from "@base-ui/react/field";
 import { CampusButton } from "./CampusButton";
 import { SkillInput } from "./SkillInput";
 import { useProfile, COURSES, type Course } from "@/lib/profile-context";
 import { useToast } from "./Toast";
 import { useFocusTrap } from "@/lib/useFocusTrap";
+import { uploadResume, deleteResume } from "@/lib/actions/resume";
 
 interface ProfileEditProps {
   onClose: () => void;
@@ -218,6 +220,9 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
               Pressione Enter ou vírgula para adicionar
             </p>
           </div>
+
+          {/* Currículo */}
+          <ResumeDropzone />
         </div>
 
         {/* Footer */}
@@ -240,5 +245,284 @@ export function ProfileEdit({ onClose }: ProfileEditProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+const RESUME_MIME = "application/pdf";
+
+function formatBytes(size: number): string {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(0)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function ResumeDropzone() {
+  const { profile, setResumeLocal } = useProfile();
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [isDragging, setIsDragging] = useState(false);
+  const [localSize, setLocalSize] = useState<number | null>(null);
+
+  const hasResume = Boolean(profile.resume_path && profile.resume_name);
+
+  function handleFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+    const file = fileList[0];
+
+    // Validação client-side (a Server Action revalida).
+    if (file.type !== RESUME_MIME) {
+      toast("O currículo precisa estar em PDF", "error");
+      return;
+    }
+    if (file.size > MAX_RESUME_BYTES) {
+      toast("PDF excede o limite de 5 MB", "error");
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append("resume", file);
+
+    startTransition(async () => {
+      const result = await uploadResume(fd);
+      if ("error" in result) {
+        toast(result.error, "error");
+        return;
+      }
+      setResumeLocal({
+        resume_path: `${profile.id}/resume.pdf`,
+        resume_name: file.name,
+      });
+      setLocalSize(file.size);
+      toast("Currículo enviado com sucesso", "success");
+    });
+  }
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    handleFiles(e.target.files);
+    // Permite re-selecionar o mesmo arquivo após erro.
+    e.target.value = "";
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
+    e.preventDefault();
+    setIsDragging(false);
+    if (isPending) return;
+    handleFiles(e.dataTransfer.files);
+  }
+
+  function handleDelete() {
+    if (isPending) return;
+    startTransition(async () => {
+      const result = await deleteResume();
+      if ("error" in result) {
+        toast(result.error, "error");
+        return;
+      }
+      setResumeLocal({ resume_path: null, resume_name: null });
+      setLocalSize(null);
+      toast("Currículo removido", "success");
+    });
+  }
+
+  return (
+    <Field.Root className="block">
+      <Field.Label
+        nativeLabel={false}
+        render={
+          <span
+            className="block text-[12px] font-medium mb-1.5 uppercase tracking-wide"
+            style={{ color: "var(--text-muted)" }}
+          />
+        }
+      >
+        Currículo (PDF)
+      </Field.Label>
+
+      {!hasResume ? (
+        <label
+          htmlFor="resume-file-input"
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (!isPending) setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+          aria-busy={isPending}
+          className="flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 rounded-xl"
+          style={{
+            background: "rgba(255,255,255,.05)",
+            border: `1.5px dashed ${
+              isDragging ? "rgba(237,21,90,.55)" : "rgba(255,255,255,.1)"
+            }`,
+            padding: "22px 16px",
+            boxShadow: isDragging
+              ? "0 0 0 4px rgba(237,21,90,.12), 0 8px 24px -10px rgba(237,21,90,.4)"
+              : "none",
+            opacity: isPending ? 0.7 : 1,
+            pointerEvents: isPending ? "none" : "auto",
+          }}
+          onMouseEnter={(e) => {
+            if (isPending || isDragging) return;
+            const el = e.currentTarget;
+            el.style.borderColor = "rgba(237,21,90,.3)";
+            el.style.boxShadow = "0 0 0 4px rgba(237,21,90,.08)";
+          }}
+          onMouseLeave={(e) => {
+            if (isPending || isDragging) return;
+            const el = e.currentTarget;
+            el.style.borderColor = "rgba(255,255,255,.1)";
+            el.style.boxShadow = "none";
+          }}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ color: "var(--accent)", marginBottom: 8 }}
+            aria-hidden="true"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span className="text-[13px] font-medium" style={{ color: "var(--text)" }}>
+            {isPending ? "Enviando…" : "Arraste seu PDF ou clique para selecionar"}
+          </span>
+          <span className="text-[11px] mt-1" style={{ color: "var(--text-faint)" }}>
+            Apenas .pdf, até 5 MB
+          </span>
+          <input
+            id="resume-file-input"
+            type="file"
+            accept="application/pdf"
+            className="sr-only"
+            onChange={handleInputChange}
+            disabled={isPending}
+          />
+        </label>
+      ) : (
+        <div
+          className="flex items-center gap-3 rounded-xl"
+          style={{
+            background: "rgba(255,255,255,.04)",
+            border: "1px solid var(--border)",
+            backdropFilter: "blur(12px) saturate(140%)",
+            padding: "12px 14px",
+            opacity: isPending ? 0.7 : 1,
+          }}
+        >
+          <div
+            className="flex items-center justify-center rounded-lg shrink-0"
+            style={{
+              width: 36,
+              height: 36,
+              background: "var(--accent-soft)",
+              border: "1px solid rgba(237,21,90,.25)",
+              color: "var(--accent)",
+            }}
+            aria-hidden="true"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <p
+              className="text-[13px] font-medium truncate"
+              style={{ color: "var(--text)" }}
+              title={profile.resume_name ?? undefined}
+            >
+              {profile.resume_name}
+            </p>
+            <p className="text-[11px]" style={{ color: "var(--text-faint)" }}>
+              {isPending ? "Processando…" : localSize !== null ? `PDF · ${formatBytes(localSize)}` : "PDF anexado"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={isPending}
+            aria-label="Remover currículo"
+            className="inline-flex items-center justify-center rounded-lg transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              width: 32,
+              height: 32,
+              background: "rgba(255,60,90,.12)",
+              color: "#ff5577",
+              border: "1px solid rgba(255,60,90,.3)",
+            }}
+            onMouseEnter={(e) => {
+              if (isPending) return;
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,60,90,.2)";
+            }}
+            onMouseLeave={(e) => {
+              if (isPending) return;
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,60,90,.12)";
+            }}
+          >
+            {isPending ? (
+              <span
+                className="rounded-full border-2"
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderColor: "rgba(255,60,90,.25)",
+                  borderTopColor: "#ff5577",
+                  animation: "spin .7s linear infinite",
+                }}
+                aria-hidden="true"
+              />
+            ) : (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+              </svg>
+            )}
+          </button>
+        </div>
+      )}
+
+      <Field.Description
+        render={
+          <p
+            className="text-[11px] mt-1.5"
+            style={{ color: "var(--text-faint)" }}
+          />
+        }
+      >
+        Empresas parceiras logadas poderão baixar este PDF a partir do seu perfil.
+      </Field.Description>
+    </Field.Root>
   );
 }

@@ -26,11 +26,16 @@ export interface UserProfile {
   course: Course;
   bio: string;
   skills: string[];
+  resume_path: string | null;
+  resume_name: string | null;
 }
 
 interface ProfileContextValue {
   profile: UserProfile;
   updateProfile: (patch: Partial<Omit<UserProfile, "id" | "email">>) => Promise<void>;
+  // Mantém o estado de currículo do cliente sincronizado com o servidor após
+  // upload/delete (a persistência é feita pelas Server Actions; aqui só refletimos).
+  setResumeLocal: (patch: { resume_path: string | null; resume_name: string | null }) => void;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -48,7 +53,16 @@ export function ProfileProvider({ children, initialData }: ProfileProviderProps)
     course: (initialData?.course as Course) ?? "Tecnologia",
     bio: initialData?.bio ?? "",
     skills: initialData?.skills ?? [],
+    resume_path: initialData?.resume_path ?? null,
+    resume_name: initialData?.resume_name ?? null,
   }));
+
+  const setResumeLocal = useCallback(
+    (patch: { resume_path: string | null; resume_name: string | null }) => {
+      setProfile((prev) => ({ ...prev, ...patch }));
+    },
+    []
+  );
 
   const updateProfile = useCallback(
     async (patch: Partial<Omit<UserProfile, "id" | "email">>) => {
@@ -70,7 +84,7 @@ export function ProfileProvider({ children, initialData }: ProfileProviderProps)
   );
 
   return (
-    <ProfileContext.Provider value={{ profile, updateProfile }}>
+    <ProfileContext.Provider value={{ profile, updateProfile, setResumeLocal }}>
       {children}
     </ProfileContext.Provider>
   );

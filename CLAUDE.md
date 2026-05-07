@@ -98,23 +98,29 @@ Map the tokens above into `tailwind.config.ts` so they're usable as utilities (`
   permissão e alinhamento explícito ao usuário no prompt — propondo estrutura,
   breakpoints, comportamento sticky/drawer e agrupamento de filtros. Codificar
   o layout sem essa aprovação prévia é uma violação direta do briefing.
+- **Para novas implementações de UI** (a partir do Milestone 11, ex.: Dropzone
+  de currículo), utilizar preferencialmente `@base-ui/react` no lugar do
+  `shadcn/ui`, mantendo a estética Glassmorphism, Dark Mode e o tom Magenta
+  (`--accent: #ED155A`). Componentes shadcn já existentes permanecem como
+  estão; a regra vale para componentes novos.
 
 ---
 
 ## Data Models
 
 ```sql
-users        (id, name, email, course, skills text[], bio, avatar_url)
+users        (id, name, email, course, skills text[], bio, avatar_url,
+              resume_path text, resume_name text)                            -- v2: resume cols
 projects     (id, title, description, company, slots int, reward text,
               skills text[], status, author_id,
               category check (category in ('partner','academic','open')))   -- v2
 memberships  (user_id, project_id, joined_at)
-resumes      (id, user_id, file_path, parsed_at, parsed_payload jsonb)      -- v2
 ```
 
 RLS: users can only read/write their own `users` row; `memberships` rows are user-scoped; `projects` are readable by all authenticated users.
 
-- `resumes` é estritamente owner-only (read/write). Storage bucket `resumes/` segue a mesma regra.
+- Storage bucket `resumes/`: upload/delete restritos ao dono (`auth.uid`); leitura liberada para qualquer usuário autenticado (`role = 'authenticated'`), de modo que empresas parceiras possam baixar o PDF a partir do perfil público.
+- `users.resume_path` e `users.resume_name` são graváveis apenas pelo próprio usuário (RLS já existente em `users`).
 - `projects.category` é gravável apenas pelo `author_id`.
 
 ---
@@ -133,4 +139,5 @@ RLS: users can only read/write their own `users` row; `memberships` rows are use
 7. **Project categories** — partner / academic / open hierarchical feed
 8. **Skills match sidebar** — filters, match score, URL state
    *(layout requires user approval before coding — see Coding Conventions)*
-9. **Smart Profile** — resume PDF upload, parsing, auto-fill flow
+9. **Resume upload** — PDF upload to Storage, public download from profile
+   *(parsing/auto-fill por IA fica para a V2)*
