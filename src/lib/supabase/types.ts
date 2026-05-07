@@ -14,6 +14,8 @@ export interface Database {
           bio: string | null;
           skills: string[];
           avatar_url: string | null;
+          resume_path: string | null;
+          resume_name: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -25,6 +27,8 @@ export interface Database {
           bio?: string | null;
           skills?: string[];
           avatar_url?: string | null;
+          resume_path?: string | null;
+          resume_name?: string | null;
         };
         Update: {
           name?: string;
@@ -32,6 +36,8 @@ export interface Database {
           bio?: string | null;
           skills?: string[];
           avatar_url?: string | null;
+          resume_path?: string | null;
+          resume_name?: string | null;
           updated_at?: string;
         };
       };

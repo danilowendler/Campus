@@ -294,35 +294,29 @@
 
 ---
 
-## Milestone 11 — Smart Profile (Upload de Currículo + Auto-fill)
+## Milestone 11 — Gestão de Currículo (Upload e Visualização)
 
-**Branch:** `feat/smart-profile-cv`
-**Objetivo:** Permitir que o estudante envie um currículo em PDF e use IA/parser para preencher automaticamente bio e skills do perfil.
+**Branch:** `feat/resume-upload`
+**Objetivo:** Permitir que o estudante anexe um currículo em PDF ao perfil e que empresas parceiras (qualquer usuário autenticado) possam baixar/visualizar o arquivo a partir do perfil público.
+
+> ℹ️ **Pivot estratégico (aprovado pela diretoria):** o parsing por IA/LLM e o
+> auto-preenchimento de bio/skills foram adiados para a V2. Esta versão entrega
+> apenas o upload, armazenamento seguro e download do PDF — gerando valor
+> imediato para o pipeline de recrutamento das empresas parceiras.
 
 ### Entregas
 
-- [ ] Supabase Storage: novo bucket privado `resumes/` com policy "owner-only".
-- [ ] Migration: tabela `resumes (id, user_id, file_path, parsed_at, parsed_payload jsonb)`.
-- [ ] `ProfileEdit.tsx`: novo botão "Anexar currículo (PDF)" com dropzone.
-  - Validação: somente `application/pdf`, tamanho máximo (ex.: 5 MB).
-  - Indicador de upload + estado pós-upload com nome do arquivo.
-- [ ] Server Action `uploadResume`: salva no Storage, cria linha em `resumes`.
-- [ ] Server Action `parseResume`:
-  - Extrai texto do PDF (ex.: `pdf-parse` ou `unpdf` — avaliar na implementação; preferir lib pure-JS sem nativos).
-  - Pipeline de extração: **decidir na implementação** entre (a) heurística regex + dicionário de skills, ou (b) chamada a LLM (ex.: Claude via SDK) com schema estruturado.
-  - Persiste `parsed_payload` em `resumes`.
-- [ ] Após parse, exibir CTA **"Preencher perfil automaticamente"** que abre um diff visual: campos atuais vs. extraídos, com checkboxes por campo.
-- [ ] Confirmação aplica os campos selecionados via `updateProfile`.
-- [ ] Foco inicial: **bio** e **skills**. Curso e nome ficam como sugestões (nunca sobrescrevem sem confirmação).
-- [ ] Toast de sucesso e fallback gracioso se parse falhar.
-- [ ] Telemetria mínima: log do tempo de parse e taxa de aceitação dos campos sugeridos.
-
-**Decisão pendente (a confirmar antes da implementação):** estratégia de parse (heurística vs LLM) — apresentar trade-offs ao usuário no início da branch.
+- [x] Supabase Storage: Criar bucket `resumes`.
+- [x] RLS do Storage: Configurar policy onde apenas o dono (`auth.uid`) pode fazer upload/delete, mas qualquer usuário autenticado (`role = 'authenticated'`) pode ler/baixar.
+- [x] Migration SQL: Em vez de uma tabela nova, rodar `ALTER TABLE users ADD COLUMN resume_path TEXT, ADD COLUMN resume_name TEXT;`.
+- [x] Server Actions: Criar `lib/actions/resume.ts` com funções `uploadResume(formData)` (com validação de PDF e max 5MB) e `deleteResume()`.
+- [x] UI de Upload (Edição): Em `components/campus/ProfileEdit.tsx`, adicionar um Dropzone/Input File utilizando componentes do `@base-ui/react` (substituindo o uso de shadcn/ui para novas features). Deve ter estado visual para "Sem currículo" (área de drop tracejada com hover glow magenta) e "Com currículo" (mostrando nome, tamanho e botão de exclusão variante danger).
+- [x] UI de Download (Perfil Público): Em `components/campus/ProfileHeader.tsx`, adicionar um botão Glassmorphism (`backdrop-blur-md`, `bg-white/5`, borda `border-white/10`) ao lado das skills para baixar/abrir o currículo em nova aba.
 
 **Commits sugeridos:**
-- `feat: resume upload — storage bucket, profile dropzone`
-- `feat: resume parsing pipeline and parsed payload table`
-- `feat: profile auto-fill flow with field-level diff and confirmation`
+- `feat: resume storage bucket and users.resume_path column`
+- `feat: resume upload server actions with pdf+size validation`
+- `feat: profile resume dropzone (base-ui) and public download button`
 
 ---
 
@@ -341,7 +335,7 @@
 | 8 | `feat/deploy` | Deploy em produção | — | ✓ |
 | 9 | `feat/projects-categories` | Categorias do feed (parceira/acadêmico/aberto) | ✓ | ✓ |
 | 10 | `feat/skills-match-sidebar` | Sidebar de filtros + match score | ✓ | — |
-| 11 | `feat/smart-profile-cv` | Upload de currículo + auto-fill | ✓ | ✓ |
+| 11 | `feat/resume-upload` | Upload e download de currículo PDF | ✓ | ✓ |
 
 > **Referência visual permanente:** `project/Campus Landing.html`  
 > Consultar este arquivo sempre que houver dúvida sobre espaçamentos, cores exatas ou comportamentos de interação.
